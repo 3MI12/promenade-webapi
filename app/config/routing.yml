@@ -1,0 +1,8 @@
+verbunden_blendoku:
+    type:     rest
+    prefix:   /v1
+    resource: "@verbundenBlendokuBundle/Resources/config/routes-v1.yml"
+
+NelmioApiDocBundle:
+  resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
+  prefix:   /api/doc

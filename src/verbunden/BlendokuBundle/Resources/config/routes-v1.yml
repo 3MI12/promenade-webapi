@@ -1,0 +1,17 @@
+verbunden_Blendoku_User:
+     type: rest
+     prefix: /user
+     resource: "verbunden\BlendokuBundle\Controller\UserController"
+     name_prefix:  api_user_
+
+verbunden_Blendoku_Level:
+     type: rest
+     prefix: /level
+     resource: "verbunden\BlendokuBundle\Controller\GameController"
+     name_prefix:  api_level_
+
+verbunden_Blendoku_Stats:
+     type: rest
+     prefix: /stats
+     resource: "verbunden\BlendokuBundle\Controller\StatsController"
+     name_prefix:  api_stats_
