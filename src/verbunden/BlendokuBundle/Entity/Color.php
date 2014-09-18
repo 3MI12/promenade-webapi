@@ -1,5 +1,5 @@
 <?php
-// src/verbunden/BlendokuBundle/Entity/Level.php
+// src/verbunden/BlendokuBundle/Entity/Color.php
 
 namespace verbunden\BlendokuBundle\Entity;
 
@@ -14,49 +14,15 @@ class Color
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\OneToMany(targetEntity="Game", mappedBy="level", cascade={"ALL"})
      * @var integer
      */
     private $id;
 
     /**
-     * @ORM\Column(type="array")
+     * @ORM\Column(type="string")
      * @var array
      */
-    private $color;
-
-    /**
-     * @ORM\Column(type="array")
-     * @var array
-     */
-    private $startgrid;
-
-	/**
-     * @ORM\Column(type="array")
-     * @var array
-     */
-    private $grid;
-
-    /**
-     * @ORM\Column(type="integer")
-     * @var integer
-     */
-    private $complexity;
-
-	/**
- 	* Get a certain level by id.
- 	* 
- 	* @author Benjamin Brandt 2014
- 	* @version 1.0
- 	* 
- 	* @param entityManager $entityManager
- 	* @param id $id
- 	* @return user object
- 	*/
-	public static function getUserById($id) {
-		return $entityManager->getRepository('verbundenBlendokuBundle:Level')->findOneById($id);
-	}
+    private $hex;
 	
     /**
      * Get id
@@ -74,9 +40,9 @@ class Color
      * @param array $color
      * @return Level
      */
-    public function setColor($color)
+    public function setHex($hex)
     {
-        $this->color = $color;
+        $this->hex = $hex;
 
         return $this;
     }
@@ -84,79 +50,10 @@ class Color
     /**
      * Get color
      *
-     * @return array 
+     * @return string 
      */
-    public function getColor()
+    public function getHex()
     {
-        return $this->color;
-    }
-
-    /**
-     * Set startgrid
-     *
-     * @param array $startgrid
-     * @return Level
-     */
-    public function setStartgrid($startgrid)
-    {
-        $this->startgrid = $startgrid;
-
-        return $this;
-    }
-
-    /**
-     * Get startgrid
-     *
-     * @return array 
-     */
-    public function getStartgrid()
-    {
-        return $this->startgrid;
-    }
-
-    /**
-     * Set grid
-     *
-     * @param array $grid
-     * @return Level
-     */
-    public function setGrid($grid)
-    {
-        $this->grid = $grid;
-
-        return $this;
-    }
-
-    /**
-     * Get grid
-     *
-     * @return array 
-     */
-    public function getGrid()
-    {
-        return $this->grid;
-    }
-
-    /**
-     * Set complexity
-     *
-     * @param integer $complexity
-     * @return Level
-     */
-    public function setComplexity($complexity)
-    {
-        $this->complexity = $complexity;
-
-        return $this;
-    }
-
-    /**
-     * Get complexity
-     *
-     * @return integer 
-     */
-    public function getComplexity()
-    {
-        return $this->complexity;
+        return $this->hex;
     }
 }
