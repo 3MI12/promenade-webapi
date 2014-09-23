@@ -27,6 +27,35 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class GameController extends FOSRestController
 {
+	public function getInitAction(){	
+		$color['23'] = '#c2c2c2';
+		$free['24'] = '#';
+		$free['25'] = '#';
+		$free['26'] = '#';
+		$free['27'] = '#';
+		$free['28'] = '#';
+		$color['29'] = '#c4c4c4';
+		$game['color']=array('#12341','#12541','#12361','#21341','#52341');
+
+		for ($i = 0; $i <= 99; $i++) {
+	    	if (isset($free[$i])){
+				$game['grid'][$i]=array('color' => '#6b6b6b','edit' => true);
+			}elseif(isset($color[$i])){
+				$game['grid'][$i]=array('color' => $color[$i],'edit' => false);
+			}
+		}
+				
+		$level = new Level();
+		$level->setColor($game['color']);	
+		$level->setComplexity('3');
+		$level->setGrid($game['grid']);
+		$level->setStartgrid($game['grid']);		
+		$em = $this->getDoctrine()->getManager();
+		$em->persist($level);
+		$em->flush();
+	    return $level;
+	}
+	
 	public function getNumberAction($id)
 	{
 	    return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findOneById($id);
@@ -44,7 +73,8 @@ class GameController extends FOSRestController
 	
 	public function postNumberAction($id)
 	{
-	    return $this->container->get('doctrine.entity_manager')->getRepository('Level')->findById($id);
+	    
+		return $this->container->get('doctrine.entity_manager')->getRepository('Level')->findById($id);
 	}
 	
 	public function getListAction()

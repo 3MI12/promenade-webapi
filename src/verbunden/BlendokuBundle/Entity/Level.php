@@ -20,6 +20,12 @@ class Level
      */
     private $id;
 
+	/**
+     * @ORM\Column(type="array")
+     * @var array
+     */
+    private $color;
+
     /**
      * @ORM\Column(type="array")
      * @var array
@@ -46,6 +52,29 @@ class Level
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Set color
+     *
+     * @param array $color
+     * @return Level
+     */
+    public function setColor($color)
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * Get color
+     *
+     * @return array 
+     */
+    public function getColor()
+    {
+        return $this->color;
     }
 
     /**
