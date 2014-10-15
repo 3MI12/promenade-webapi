@@ -24,16 +24,100 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class UserController extends FOSRestController
 {	
-	public function getShowAction($id)
+	/**
+     * Show a users.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful"
+     *   }
+     * )
+     *
+     * @Annotations\View(
+     *  templateVar="user"
+     * )
+     *
+     * @param Request               $request      the request object
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     *
+     * @return array
+     */
+	public function getNumberAction($user_id)
 	{
-	    $reguest = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($id);
-		$data = array($reguest->name);
-		return $reguest;
+		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
 	}
 	
-	public function postShowAction($id)
+	/**
+     * Create a users.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful"
+     *   }
+     * )
+     *
+     * @Annotations\View(
+     *  templateVar="user"
+     * )
+     *
+     * @param Request               $request      the request object
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     *
+     * @return array
+     */
+	public function postNumberCreateAction($user_id)
 	{
-	    return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($id);
+		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
+	}
+	
+	/**
+     * Edit a users.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful"
+     *   }
+     * )
+     *
+     * @Annotations\View(
+     *  templateVar="user"
+     * )
+     *
+     * @param Request               $request      the request object
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     *
+     * @return array
+     */
+	public function postNumberEditAction($user_id)
+	{
+		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
+	}
+	
+	/**
+     * Searche a users.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful"
+     *   }
+     * )
+     *
+     * @Annotations\View(
+     *  templateVar="user"
+     * )
+     *
+     * @param Request               $request      the request object
+     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     *
+     * @return array
+     */
+	public function getSearchAction($user_name)
+	{
+		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findByName($user_name);
 	}
 	
 	/**
@@ -60,8 +144,6 @@ class UserController extends FOSRestController
      */
 	public function getListAction()
 	{
-		$request = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findAll();
-	    $data = array();
-		return $request;
+		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findAll();
 	}
 }

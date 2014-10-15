@@ -1,52 +1,78 @@
 <?php
-// src/verbunden/BlendokuBundle/Entity/Level.php
-
 namespace verbunden\BlendokuBundle\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
+use verbunden\BlendokuBundle\Model\LevelInterface;
 
 /**
+ * Leveldatabase
+ *
  * @ORM\Entity
  * @ORM\Table(name="level")
+ * @author Benjamin Brandt 2014
+ * @version 1.0
  */
-class Level
+class Level implements LevelInterface
 {
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\OneToMany(targetEntity="Game", mappedBy="level", cascade={"ALL"})
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var integer
      */
     private $id;
 
 	/**
      * @ORM\Column(type="array")
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var array
      */
     private $color;
 
     /**
      * @ORM\Column(type="array")
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var array
      */
     private $startgrid;
 
 	/**
      * @ORM\Column(type="array")
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var array
      */
     private $grid;
 
     /**
      * @ORM\Column(type="integer")
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var integer
      */
     private $complexity;
-	
+
+	/**
+     * Set id
+     *
+     * @param integer $id
+     * @return Level
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * Get id
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @return integer 
      */
     public function getId()
@@ -57,6 +83,8 @@ class Level
     /**
      * Set color
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @param array $color
      * @return Level
      */
@@ -70,6 +98,8 @@ class Level
     /**
      * Get color
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @return array 
      */
     public function getColor()
@@ -80,6 +110,8 @@ class Level
     /**
      * Set startgrid
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @param array $startgrid
      * @return Level
      */
@@ -93,6 +125,8 @@ class Level
     /**
      * Get startgrid
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @return array 
      */
     public function getStartgrid()
@@ -103,6 +137,8 @@ class Level
     /**
      * Set grid
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @param array $grid
      * @return Level
      */
@@ -116,6 +152,8 @@ class Level
     /**
      * Get grid
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @return array 
      */
     public function getGrid()
@@ -126,6 +164,8 @@ class Level
     /**
      * Set complexity
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @param integer $complexity
      * @return Level
      */
@@ -139,6 +179,8 @@ class Level
     /**
      * Get complexity
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @return integer 
      */
     public function getComplexity()

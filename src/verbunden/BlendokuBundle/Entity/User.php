@@ -1,44 +1,73 @@
 <?php
-// src/verbunden/BlendokuBundle/Entity/User.php
 namespace verbunden\BlendokuBundle\Entity;
-
 use Doctrine\ORM\Mapping as ORM;
+use verbunden\BlendokuBundle\Model\UserInterface;
 
 /**
- * @author Benjamin Brandt 2014
- * @version 1.0
+ * Userdatabase
+ *
  * @ORM\Entity
  * @ORM\Table(name="user")
+ * @author Benjamin Brandt 2014
+ * @version 1.0
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\OneToMany(targetEntity="Game", mappedBy="user", cascade={"ALL"})
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var integer
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=false)
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var string
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=200, nullable=false)
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var string
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=300, nullable=false)
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
      * @var string
      */
     private $hash;
 
+    /**
+     * @ORM\Column(type="string", length=300, nullable=false)
+	 * @author Benjamin Brandt 2014
+	 * @version 1.0
+     * @var string
+     */
+    private $salt;
+
+	/**
+	* construct
+	*
+	* @author Benjamin Brandt 2014
+	* @version 1.0
+	* @param string $salt
+	* @return int 
+	*/
+ 	public function __construct()
+    {
+        $this->salt = 'initsaltvalue';
+    }
 
     /**
      * Get id
@@ -124,10 +153,39 @@ class User
     /**
      * Get hash
      *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
      * @return string 
      */
     public function getHash()
     {
         return $this->hash;
+    }
+
+    /**
+     * Set salt
+     *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
+     * @param string $hash
+     * @return User
+     */
+    public function setSalt($salt)
+    {
+        $this->hash = $salt;
+
+        return $this;
+    }
+
+    /**
+     * Get salt
+     *
+ 	 * @author Benjamin Brandt 2014
+ 	 * @version 1.0
+     * @return string 
+     */
+    public function getSalt()
+    {
+        return $this->salt;
     }
 }

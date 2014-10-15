@@ -1,0 +1,43 @@
+# verbunden\BlendokuBundle/Resources/config/validation.yml
+verbunden\BlendokuBundle\Entity\User:
+    properties: 
+        name:
+            - NotBlank: ~
+            - NotNull: ~
+            - Length:
+                min: 4
+                max: 200
+                minMessage: "Your name must be at least 4 characters length"
+                maxMessage: "Your name cannot be longer than 200 characters length"
+        password:
+            - NotBlank: ~
+            - NotNull: ~
+            - Length:
+                min: 4
+                max: 200
+                minMessage: "Your name must be at least 4 characters length"
+                maxMessage: "Your name cannot be longer than 200 characters length"
+            - Symfony\Component\Security\Core\Validator\Constraints\UserPassword:
+                message: "Wrong value for your current password"
+        email:
+            - NotBlank: ~
+            - NotNull: ~
+            - Email:
+                message: The email "{{ value }}" is not a valid email.
+                checkMX: true
+                checkHost: true
+
+verbunden\BlendokuBundle\Entity\Level:
+    properties:
+        id:
+            - NotBlank: ~
+            - NotNull: ~
+        startgrid:
+            - NotBlank: ~
+            - NotNull: ~
+        grid:
+            - NotBlank: ~
+            - NotNull: ~
+        complexity:
+            - NotBlank: ~
+            - NotNull: ~
