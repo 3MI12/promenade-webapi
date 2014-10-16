@@ -1,5 +1,7 @@
 <?php
+
 namespace verbunden\BlendokuBundle\Handler;
+
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\Form\FormFactoryInterface;
 use verbunden\BlendokuBundle\Model\GameInterface;
@@ -12,7 +14,6 @@ use verbunden\BlendokuBundle\Exception\InvalidFormException;
  * @package verbunden\BlendokuBundle\Handler
  * @author Benjamin Brandt
  */
-class StatsHandler implements StatsHandlerInterface
-{	
-	
+class StatsHandler implements StatsHandlerInterface {
+    
 }

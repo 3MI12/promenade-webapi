@@ -3,8 +3,8 @@
 namespace verbunden\BlendokuBundle\Controller;
 
 #use verbunden\BlendokuBundle\Form\NoteType;
-use verbunden\BlendokuBundle\Entity\User;
 
+use verbunden\BlendokuBundle\Entity\User;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -22,9 +22,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @package verbunden\BlendokuBundle\Controller
  * @author Benjamin Brandt
  */
-class UserController extends FOSRestController
-{	
-	/**
+class UserController extends FOSRestController {
+
+    /**
      * Show a users.
      *
      * @ApiDoc(
@@ -43,12 +43,11 @@ class UserController extends FOSRestController
      *
      * @return array
      */
-	public function getNumberAction($user_id)
-	{
-		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
-	}
-	
-	/**
+    public function getNumberAction($user_id) {
+        return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
+    }
+
+    /**
      * Create a users.
      *
      * @ApiDoc(
@@ -67,12 +66,11 @@ class UserController extends FOSRestController
      *
      * @return array
      */
-	public function postNumberCreateAction($user_id)
-	{
-		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
-	}
-	
-	/**
+    public function postNumberCreateAction($user_id) {
+        return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
+    }
+
+    /**
      * Edit a users.
      *
      * @ApiDoc(
@@ -91,12 +89,11 @@ class UserController extends FOSRestController
      *
      * @return array
      */
-	public function postNumberEditAction($user_id)
-	{
-		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
-	}
-	
-	/**
+    public function postNumberEditAction($user_id) {
+        return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findById($user_id);
+    }
+
+    /**
      * Searche a users.
      *
      * @ApiDoc(
@@ -115,12 +112,11 @@ class UserController extends FOSRestController
      *
      * @return array
      */
-	public function getSearchAction($user_name)
-	{
-		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findByName($user_name);
-	}
-	
-	/**
+    public function getSearchAction($user_name) {
+        return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findByName($user_name);
+    }
+
+    /**
      * List all users.
      *
      * @ApiDoc(
@@ -142,8 +138,8 @@ class UserController extends FOSRestController
      *
      * @return array
      */
-	public function getListAction()
-	{
-		return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findAll();
-	}
+    public function getListAction() {
+        return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:User')->findAll();
+    }
+
 }

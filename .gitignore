@@ -1,0 +1,10 @@
+/web/bundles/
+/web/stats/*
+/app/cache/*
+/app/logs/*
+/build/
+/vendor/
+/bin/
+/stats/*
+/composer.phar
+/app/config/parameters.yml

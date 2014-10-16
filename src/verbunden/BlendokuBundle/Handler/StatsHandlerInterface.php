@@ -1,5 +1,7 @@
 <?php
+
 namespace verbunden\BlendokuBundle\Handler;
+
 use verbunden\BlendokuBundle\Model\GameInterface;
 
 /**
@@ -9,7 +11,6 @@ use verbunden\BlendokuBundle\Model\GameInterface;
  * @author Benjamin Brandt 2014
  * @version 1.0
  */
-interface StatsHandlerInterface
-{	
-
+interface StatsHandlerInterface {
+    
 }

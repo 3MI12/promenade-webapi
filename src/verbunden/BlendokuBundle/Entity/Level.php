@@ -1,5 +1,7 @@
 <?php
+
 namespace verbunden\BlendokuBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
 use verbunden\BlendokuBundle\Model\LevelInterface;
 
@@ -11,58 +13,57 @@ use verbunden\BlendokuBundle\Model\LevelInterface;
  * @author Benjamin Brandt 2014
  * @version 1.0
  */
-class Level implements LevelInterface
-{
+class Level implements LevelInterface {
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\OneToMany(targetEntity="Game", mappedBy="level", cascade={"ALL"})
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @var integer
      */
     private $id;
 
-	/**
+    /**
      * @ORM\Column(type="array")
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @var array
      */
     private $color;
 
     /**
      * @ORM\Column(type="array")
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @var array
      */
     private $startgrid;
 
-	/**
+    /**
      * @ORM\Column(type="array")
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @var array
      */
     private $grid;
 
     /**
      * @ORM\Column(type="integer")
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @var integer
      */
     private $complexity;
 
-	/**
+    /**
      * Set id
      *
      * @param integer $id
      * @return Level
      */
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -71,25 +72,23 @@ class Level implements LevelInterface
     /**
      * Get id
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
     /**
      * Set color
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param array $color
      * @return Level
      */
-    public function setColor($color)
-    {
+    public function setColor($color) {
         $this->color = $color;
 
         return $this;
@@ -98,25 +97,23 @@ class Level implements LevelInterface
     /**
      * Get color
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return array 
      */
-    public function getColor()
-    {
+    public function getColor() {
         return $this->color;
     }
 
     /**
      * Set startgrid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param array $startgrid
      * @return Level
      */
-    public function setStartgrid($startgrid)
-    {
+    public function setStartgrid($startgrid) {
         $this->startgrid = $startgrid;
 
         return $this;
@@ -125,25 +122,23 @@ class Level implements LevelInterface
     /**
      * Get startgrid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return array 
      */
-    public function getStartgrid()
-    {
+    public function getStartgrid() {
         return $this->startgrid;
     }
 
     /**
      * Set grid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param array $grid
      * @return Level
      */
-    public function setGrid($grid)
-    {
+    public function setGrid($grid) {
         $this->grid = $grid;
 
         return $this;
@@ -152,25 +147,23 @@ class Level implements LevelInterface
     /**
      * Get grid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return array 
      */
-    public function getGrid()
-    {
+    public function getGrid() {
         return $this->grid;
     }
 
     /**
      * Set complexity
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param integer $complexity
      * @return Level
      */
-    public function setComplexity($complexity)
-    {
+    public function setComplexity($complexity) {
         $this->complexity = $complexity;
 
         return $this;
@@ -179,12 +172,12 @@ class Level implements LevelInterface
     /**
      * Get complexity
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return integer 
      */
-    public function getComplexity()
-    {
+    public function getComplexity() {
         return $this->complexity;
     }
+
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace verbunden\BlendokuBundle\Model;
 
 /**
@@ -10,9 +11,9 @@ namespace verbunden\BlendokuBundle\Model;
  * @version 1.0
  *
  */
-Interface LevelInterface 
-{
-	/**
+Interface LevelInterface {
+
+    /**
      * Set id
      *
      * @param integer $id
@@ -23,8 +24,8 @@ Interface LevelInterface
     /**
      * Get id
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return integer 
      */
     public function getId();
@@ -32,8 +33,8 @@ Interface LevelInterface
     /**
      * Set color
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param array $color
      * @return Level
      */
@@ -42,8 +43,8 @@ Interface LevelInterface
     /**
      * Get color
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return array 
      */
     public function getColor();
@@ -51,8 +52,8 @@ Interface LevelInterface
     /**
      * Set startgrid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param array $startgrid
      * @return Level
      */
@@ -61,8 +62,8 @@ Interface LevelInterface
     /**
      * Get startgrid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return array 
      */
     public function getStartgrid();
@@ -70,8 +71,8 @@ Interface LevelInterface
     /**
      * Set grid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param array $grid
      * @return Level
      */
@@ -80,8 +81,8 @@ Interface LevelInterface
     /**
      * Get grid
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return array 
      */
     public function getGrid();
@@ -89,8 +90,8 @@ Interface LevelInterface
     /**
      * Set complexity
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param integer $complexity
      * @return Level
      */
@@ -99,8 +100,8 @@ Interface LevelInterface
     /**
      * Get complexity
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return integer 
      */
     public function getComplexity();

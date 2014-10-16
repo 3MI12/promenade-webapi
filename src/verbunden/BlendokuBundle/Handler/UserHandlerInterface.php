@@ -1,5 +1,7 @@
 <?php
+
 namespace verbunden\BlendokuBundle\Handler;
+
 use verbunden\BlendokuBundle\Model\UserInterface;
 
 /**
@@ -9,53 +11,53 @@ use verbunden\BlendokuBundle\Model\UserInterface;
  * @author Benjamin Brandt 2014
  * @version 1.0
  */
-interface UserHandlerInterface
-{	
-	/**
+interface UserHandlerInterface {
+
+    /**
      * Verify a user given the parameters
      *
-	 * @api
+     * @api
      *
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
-	 * @param integer array $parameters
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param integer array $parameters
      * @return array
      */
-	public function verifyUser(array $parameters);
-	
-	/**
+    public function verifyUser(array $parameters);
+
+    /**
      * Show one user given the identifier
      *
-	 * @api
+     * @api
      *
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
-	 * @param integer $user_id
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param integer $user_id
      * @return array
      */
-	public function showUser($user_id);
-	
-	/**
+    public function showUser($user_id);
+
+    /**
      * Create one user given the parameters
      *
-	 * @api
+     * @api
      *
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
-	 * @param array $parameters
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param array $parameters
      * @return array
      */
-	public function createUser(array $parameters);
-	
-	/**
+    public function createUser(array $parameters);
+
+    /**
      * Edit one user given the parameters
      *
-	 * @api
+     * @api
      *
-	 * @author Benjamin Brandt 2014
-	 * @version 1.0
-	 * @param array $parameters
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param array $parameters
      * @return array
      */
-	public function editUser(array $parameters);
+    public function editUser(array $parameters);
 }

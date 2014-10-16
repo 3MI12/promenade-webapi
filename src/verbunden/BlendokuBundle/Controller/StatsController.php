@@ -3,8 +3,8 @@
 namespace verbunden\BlendokuBundle\Controller;
 
 #use verbunden\BlendokuBundle\Form\NoteType;
-use verbunden\BlendokuBundle\Entity\Game;
 
+use verbunden\BlendokuBundle\Entity\Game;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -22,9 +22,9 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * @package verbunden\BlendokuBundle\Controller
  * @author Benjamin Brandt
  */
-class StatsController extends FOSRestController
-{	
-	/**
+class StatsController extends FOSRestController {
+
+    /**
      * Get global highscore.
      *
      * @ApiDoc(
@@ -46,12 +46,11 @@ class StatsController extends FOSRestController
      *
      * @return array
      */
-	public function getHighscoreAction()
-	{
-	    return $this->container->get('doctrine.entity_manager')->getRepository('Game')->findAll();
-	}
-	
-	/**
+    public function getHighscoreAction() {
+        return $this->container->get('doctrine.entity_manager')->getRepository('Game')->findAll();
+    }
+
+    /**
      * Get user highscore.
      *
      * @ApiDoc(
@@ -72,8 +71,8 @@ class StatsController extends FOSRestController
      *
      * @return array
      */
-	public function getUserscoreAction($user_id)
-	{
-	    return $this->container->get('doctrine.entity_manager')->getRepository('Game')->findAllByUser_id($user_id);
-	}
+    public function getUserscoreAction($user_id) {
+        return $this->container->get('doctrine.entity_manager')->getRepository('Game')->findAllByUser_id($user_id);
+    }
+
 }

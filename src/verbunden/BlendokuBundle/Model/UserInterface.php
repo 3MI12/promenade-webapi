@@ -1,4 +1,5 @@
 <?php
+
 namespace verbunden\BlendokuBundle\Model;
 
 /**
@@ -10,23 +11,23 @@ namespace verbunden\BlendokuBundle\Model;
  * @version 1.0
  *
  */
-Interface UserInterface 
-{
-	/**
-	* construct
-	*
-	* @author Benjamin Brandt 2014
-	* @version 1.0
-	* @param string $salt
-	* @return int 
-	*/
- 	public function __construct();
+Interface UserInterface {
+
+    /**
+     * construct
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param string $salt
+     * @return int 
+     */
+    public function __construct();
 
     /**
      * Get id
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return integer 
      */
     public function getId();
@@ -34,8 +35,8 @@ Interface UserInterface
     /**
      * Set name
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param string $name
      * @return User
      */
@@ -44,8 +45,8 @@ Interface UserInterface
     /**
      * Get name
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return string 
      */
     public function getName();
@@ -53,8 +54,8 @@ Interface UserInterface
     /**
      * Set email
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param string $email
      * @return User
      */
@@ -63,8 +64,8 @@ Interface UserInterface
     /**
      * Get email
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return string 
      */
     public function getEmail();
@@ -72,8 +73,8 @@ Interface UserInterface
     /**
      * Set hash
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param string $hash
      * @return User
      */
@@ -82,8 +83,8 @@ Interface UserInterface
     /**
      * Get hash
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return string 
      */
     public function getHash();
@@ -91,8 +92,8 @@ Interface UserInterface
     /**
      * Set salt
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @param string $hash
      * @return User
      */
@@ -101,8 +102,8 @@ Interface UserInterface
     /**
      * Get salt
      *
- 	 * @author Benjamin Brandt 2014
- 	 * @version 1.0
+     * @author Benjamin Brandt 2014
+     * @version 1.0
      * @return string 
      */
     public function getSalt();
