@@ -14,17 +14,6 @@ namespace verbunden\BlendokuBundle\Model;
 Interface GameInterface {
 
     /**
-     * construct
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string $user_id
-     * @param string $level_id
-     * @return int 
-     */
-    public function __construct($user_id, $level_id);
-
-    /**
      * get property $id
      *
      * @author Benjamin Brandt 2014

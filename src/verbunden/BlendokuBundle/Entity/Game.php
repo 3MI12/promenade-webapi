@@ -4,6 +4,8 @@ namespace verbunden\BlendokuBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use verbunden\BlendokuBundle\Model\GameInterface;
+use verbunden\BlendokuBundle\Model\LevelInterface;
+use verbunden\BlendokuBundle\Model\UserInterface;
 
 /**
  * Gamedatabase
@@ -17,7 +19,8 @@ class Game implements GameInterface {
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="id", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="id", cascade={"persist"})
+     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
      * @author Benjamin Brandt
      * @version 1.0
      * @var User who played the game
@@ -26,7 +29,8 @@ class Game implements GameInterface {
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="Level", inversedBy="id", cascade={"ALL"})
+     * @ORM\ManyToOne(targetEntity="Level", inversedBy="id", cascade={"persist"})
+     * @ORM\JoinColumn(name="level_id", referencedColumnName="id", nullable=false)
      * @author Benjamin Brandt
      * @version 1.0
      * @var Level that the gamer has played
@@ -56,21 +60,7 @@ class Game implements GameInterface {
      * @var integer
      */
     private $score;
-
-    /**
-     * construct
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string $user_id
-     * @param string $level_id
-     * @return int 
-     */
-    public function __construct($user_id, $level_id) {
-        $this->user = $user_id;
-        $this->level = $level_id;
-    }
-
+    
     /**
      * get property $id
      *

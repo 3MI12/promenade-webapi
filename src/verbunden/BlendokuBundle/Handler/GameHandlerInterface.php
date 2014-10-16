@@ -24,7 +24,7 @@ interface GameHandlerInterface {
      * @param integer $level_id
      * @return array
      */
-    public function startLevel($level_id);
+    public function startGame(array $parameters);
 
     /**
      * Solve a game given the level identifier
@@ -36,5 +36,5 @@ interface GameHandlerInterface {
      * @param array $parameters
      * @return array
      */
-    public function solveLevel(array $parameters);
+    public function solveGame(array $parameters);
 }

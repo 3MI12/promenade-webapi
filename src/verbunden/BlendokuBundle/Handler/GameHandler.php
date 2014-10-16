@@ -51,16 +51,18 @@ class GameHandler implements GameHandlerInterface {
      * @return array
      */
     public function startGame(array $parameters) {
-        $em = $this->getDoctrine()->getManager();
-        //$level = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findOneById($level_id);
-        $game = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Game')->findOneBy(array('user' => '1', 'level' => $level_id));
+        $game = $this->repository->findOneBy($parameters);
         if (!$game) {
-            $game = new Game('1', $level_id);
+            $game = gameHandler::createNewGame();
+            $user = $this->om->getRepository('verbundenBlendokuBundle:User')->findOneById($parameters['user']);
+            $level = $this->om->getRepository('verbundenBlendokuBundle:Level')->findOneById($parameters['level']);
+            $game->setUser($user);
+            $game->setLevel($level);
         }
-        $game->getStarttime("now");
+        $game->setStarttime("now");
+        $this->om->persist($game);
+        $this->om->flush($game);
         return $game;
-        $em->persist($game);
-        $em->flush();
     }
 
     /**
@@ -74,7 +76,19 @@ class GameHandler implements GameHandlerInterface {
      * @return array
      */
     public function solveGame(array $parameters) {
-        return true;
+        $game = $this->repository->findOneBy(array('user'=>$parameters['user_id'],'level'=>$parameters['level_id']));
+        if ($game && $game->getStarttime()==$parameters['starttime']) {
+            if($game->getGrid() < $parameters['grid']){
+               if($game->getScore() < $parameters['score']){
+                $game->setScore() = $parameters['score'];
+                $this->om->persist($game);
+                $this->om->flush($game);
+                }
+                return array('level_id' => $parameters['level_id'],'user_id' => $parameters['user_id'],'error'=>'','score'=>$parameters['score'],'solved'=>'y');
+            }
+            return array('level_id' => $parameters['level_id'],'user_id' => $parameters['user_id'],'error'=>'','score'=>'','solved'=>'n');
+        }
+        return array('level_id' => $parameters['level_id'],'user_id' => $parameters['user_id'],'error'=>'manipulation','score'=>'','solved'=>'');
     }
 
     protected function createNewGame() {

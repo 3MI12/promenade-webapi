@@ -18,7 +18,7 @@ class Level implements LevelInterface {
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
-     * @ORM\OneToMany(targetEntity="Game", mappedBy="level", cascade={"ALL"})
+     * @ORM\OneToMany(targetEntity="Game", mappedBy="level", cascade={"persist", "remove"}, orphanRemoval=true)
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @var integer

@@ -97,7 +97,11 @@ class GameController extends FOSRestController {
      * @throws NotFoundHttpException when page not exist
      */
     public function getNumberStartAction($level_id) {
-        return $this->getLevelOr404($level_id);
+        /* @var $level \ArrayObject */
+        if (!($level = $this->container->get('verbunden_blendoku.game.handler')->startGame(array('level' => $level_id, 'user' => '1')))) {
+            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $level_id));
+        }
+        return $level;
     }
 
     /**
@@ -119,10 +123,17 @@ class GameController extends FOSRestController {
      * @throws NotFoundHttpException when page not exist
      */
     public function postNumberSolveAction($level_id) {
-        if (!($bool = $this->container->get('verbunden_blendoku.level.handler')->solveLevel($level_id))) {
-            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $level_id));
+        if ($parameters['user_id']=0){
+            if (!($game = $this->container->get('verbunden_blendoku.level.handler')->solveLevel($parameters))) {
+                throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $parameters('level_id')));
+            }
+        }else{
+            if (!($game = $this->container->get('verbunden_blendoku.game.handler')->solveGame($parameters))) {
+                throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $parameters('level_id')));
+            }
         }
-        return $bool;
+        
+        return game;
     }
 
     /**

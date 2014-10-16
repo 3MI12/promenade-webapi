@@ -19,7 +19,7 @@ class User implements UserInterface {
      * @ORM\Column(type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\OneToMany(targetEntity="Game", mappedBy="user", cascade={"ALL"})
+     * @ORM\OneToMany(targetEntity="Game", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @var integer

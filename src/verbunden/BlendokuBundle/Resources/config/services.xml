@@ -19,6 +19,10 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument>%verbunden_blendoku.level.class%</argument>
         </service>
+        <service id="verbunden_blendoku.game.handler" class="%verbunden_blendoku.game.handler.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%verbunden_blendoku.game.class%</argument>
+        </service>
     </services>
 
 </container>

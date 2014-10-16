@@ -78,14 +78,15 @@ class LevelHandler implements LevelHandlerInterface {
      * @param integer $id
      * @return bool
      */
-    public function solveLevel($level_id) {
-        $parameters = $this->repository->findOneById($level_id);
-        $grid = $this->repository->findOneById($level_id);
-        if ($parameters && $grid && $parameters->getGrid() == $grid->getGrid()) {
-            return array('level_id' => $level_id, 'solved' => true);
-        } else {
-            return array('level_id' => $level_id, 'solved' => false);
+    public function solveLevel(array $parameters) {
+        $game = $this->repository->findOneById($parameters['level_id']);
+        if ($game) {
+            if($game->getGrid() == $parameters['grid']){
+                return array('level_id' => $parameters['level_id'],'user_id' => 'guest','error'=>'','score'=>$parameters['score'],'solved'=>'y');
+            }
+            return array('level_id' => $parameters['level_id'],'user_id' => 'guest','error'=>'','score'=>'','solved'=>'n');
         }
+        return array('level_id' => $parameters['level_id'],'user_id' => 'guest','error'=>'no level found','score'=>'','solved'=>'');
     }
 
     /**
