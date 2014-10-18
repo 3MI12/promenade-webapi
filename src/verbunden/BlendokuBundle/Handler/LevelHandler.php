@@ -75,18 +75,22 @@ class LevelHandler implements LevelHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
+     * @param integer $level_id
      * @param integer $id
      * @return bool
      */
-    public function solveLevel(array $parameters) {
-        $game = $this->repository->findOneById($parameters['level_id']);
+    public function solveLevel($level_id, array $parameters) {
+        // get level object:
+        $game = $this->repository->findOneById($level_id);
+        // prove that level exists:
         if ($game) {
-            if($game->getGrid() == $parameters['grid']){
-                return array('level_id' => $parameters['level_id'],'user_id' => 'guest','error'=>'','score'=>$parameters['score'],'solved'=>'y');
+            // prove the level solution:
+            if ($level->getGrid() == $parameters['grid']) {
+                return array('level_id' => $level_id, 'user_id' => 'guest', 'error' => '', 'score' => '0', 'solved' => true);
             }
-            return array('level_id' => $parameters['level_id'],'user_id' => 'guest','error'=>'','score'=>'','solved'=>'n');
+            return array('level_id' => $level_id, 'user_id' => 'guest', 'error' => '', 'score' => '0', 'solved' => false);
         }
-        return array('level_id' => $parameters['level_id'],'user_id' => 'guest','error'=>'no level found','score'=>'','solved'=>'');
+        return array('level_id' => $level_id, 'user_id' => 'guest', 'error' => 'manipulation', 'score' => '0', 'solved' => false);
     }
 
     /**
@@ -100,27 +104,32 @@ class LevelHandler implements LevelHandlerInterface {
      * @return array
      */
     public function createLevel(array $parameters) {
-        $game['color'] = array();
-
+        $game['color'] = array(); //init color array
+        /*
+         * build Level array $game
+         * $game['grid'] is the solvedGrid
+         * $game['startgrid'] is the startGrid
+         */
         for ($i = 0; $i < 100; $i++) {
             if (isset($parameters['free'][$i])) {
-                $game['grid'][$i] = array('color' => $parameters['free'][$i], 'edit' => false);
-                $game['startgrid'][$i] = array('color' => '#6b6b6b', 'edit' => true);
+                $game['grid'][$i] = $parameters['free'][$i];
+                $game['startgrid'][$i] = array('color' => '#6b6b6b', 'edit' => true); // set default color #6b6b6b
                 array_push($game['color'], $parameters['free'][$i]);
             } elseif (isset($parameters['set'][$i])) {
-                $game['grid'][$i] = array('color' => $parameters['set'][$i], 'edit' => false);
+                $game['grid'][$i] = $parameters['set'][$i];
                 $game['startgrid'][$i] = array('color' => $parameters['set'][$i], 'edit' => false);
             }
         }
-
-        $level = LevelHandler::createNewLevel();
+        shuffle($game['color']); //randomize order of the color values
+        $level = LevelHandler::createNewLevel(); // create new level object
+        //set values
         $level->setId($parameters['level_id']);
         $level->setColor($game['color']);
         $level->setComplexity($parameters['complexity']);
         $level->setGrid($game['grid']);
         $level->setStartgrid($game['startgrid']);
 
-        $this->om->persist($level);
+        $this->om->persist($level); //perist Data to Database
         $this->om->flush($level);
 
         return $level;
@@ -156,165 +165,16 @@ class LevelHandler implements LevelHandlerInterface {
         $em->flush();
         return $level;
     }
-
+    
     /**
-     * Get one level.
+     * Create empty level object
      *
-     * @ApiDoc(
-     *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
+     * @api
      *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing level.")
-     *
-     * @Annotations\View(
-     *  templateVar="level"
-     * )
-     *
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
-     * @return array
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return \level
      */
-    public function getNumberStarttestAction($level_id) {
-        $em = $this->getDoctrine()->getManager();
-        //$level = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findOneById($level_id);
-        $game = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Game')->findOneBy(array('user' => '1', 'level' => $level_id));
-        if (!$game) {
-            $game = new Game('1', $level_id);
-        }
-        $game->getStarttime("now");
-        return $game;
-        $em->persist($game);
-        $em->flush();
-    }
-
-    /**
-     * Post/Solve level.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing level.")
-     *
-     * @Annotations\View(
-     *  templateVar="level"
-     * )
-     *
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
-     * @return array
-     */
-    public function postNumberSolveAction($level_id) {
-        return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findOneById($id);
-    }
-
-    /**
-     * Create a level.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     *
-     * @Annotations\View(
-     *  templateVar="level"
-     * )
-     *
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
-     * @return array
-     */
-    public function getNumberCreateAction($level_id) {
-        
-    }
-
-    /**
-     * Edit a level.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     *
-     * @Annotations\View(
-     *  templateVar="level"
-     * )
-     *
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
-     * @return array
-     */
-    public function postNumberEditAction($level_id) {
-        $color['23'] = '#a2a2a2';
-        $free['24'] = '#';
-        $free['25'] = '#';
-        $free['26'] = '#';
-        $free['27'] = '#';
-        $free['28'] = '#';
-        $color['29'] = '#a4a4a4';
-        $game['color'] = array('#a3a3a3', '#a0a0a0', '#a1a1a1');
-
-        for ($i = 0; $i < 100; $i++) {
-            if (isset($free[$i])) {
-                $game['grid'][$i] = array('color' => '#6b6b6b', 'edit' => true);
-            } elseif (isset($color[$i])) {
-                $game['grid'][$i] = array('color' => $color[$i], 'edit' => false);
-            }
-        }
-
-        $level = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findOneById($level_id);
-        $level->setColor($game['color']);
-        $level->setComplexity('3');
-        $level->setGrid($game['grid']);
-        $level->setStartgrid($game['grid']);
-        $em = $this->getDoctrine()->getManager();
-        $em->persist($level);
-        $em->flush();
-        return $level;
-    }
-
-    /**
-     * List all level.
-     *
-     * @ApiDoc(
-     *   resource = true,
-     *   statusCodes = {
-     *     200 = "Returned when successful"
-     *   }
-     * )
-     *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing users.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many users to return.")
-     *
-     * @Annotations\View(
-     *  templateVar="level"
-     * )
-     *
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
-     * @return array
-     */
-    public function getListAction() {
-        return $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findAll();
-    }
-
     protected function createNewLevel() {
         return new $this->entityClass();
     }

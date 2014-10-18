@@ -3,7 +3,6 @@
 namespace verbunden\BlendokuBundle\Controller;
 
 #use verbunden\BlendokuBundle\Form\NoteType;
-
 use verbunden\BlendokuBundle\Entity\Game;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations;

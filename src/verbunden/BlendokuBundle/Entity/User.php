@@ -27,7 +27,7 @@ class User implements UserInterface {
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=200, nullable=false)
+     * @ORM\Column(type="string", length=200, nullable=false, unique=true)
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @var string
@@ -35,7 +35,7 @@ class User implements UserInterface {
     private $name;
 
     /**
-     * @ORM\Column(type="string", length=200, nullable=false)
+     * @ORM\Column(type="string", length=200, nullable=false, unique=true)
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @var string
@@ -59,6 +59,22 @@ class User implements UserInterface {
     private $salt;
 
     /**
+     * @ORM\Column(type="string", length=300, nullable=true)
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @var string
+     */
+    private $accesskey;
+    
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @var string
+     */
+    private $keyvalidity;
+    
+    /**
      * construct
      *
      * @author Benjamin Brandt 2014
@@ -67,7 +83,7 @@ class User implements UserInterface {
      * @return int 
      */
     public function __construct() {
-        $this->salt = 'initsaltvalue';
+        $this->salt = "$6$rounds=10000$".md5(uniqid(null,true));
     }
 
     /**
@@ -161,7 +177,7 @@ class User implements UserInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param string $hash
+     * @param string $salt
      * @return User
      */
     public function setSalt($salt) {
@@ -181,4 +197,53 @@ class User implements UserInterface {
         return $this->salt;
     }
 
+    /**
+     * Set accesskey
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param string $accesskey
+     * @return User
+     */
+    public function setAccesskey($accesskey) {
+        $this->hash = $accesskey;
+
+        return $this;
+    }
+
+    /**
+     * Get accesskey
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return string 
+     */
+    public function getAccesskey() {
+        return $this->salt;
+    }
+    
+    /**
+     * Set keyvalidity
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param \DateTime $keyvalidity
+     * @return User
+     */
+    public function setKeyvalidity($time = "now") {
+        $this->keyvalidity = new \DateTime($time);
+
+        return $this;
+    }
+
+    /**
+     * Get keyvalidity
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return string 
+     */
+    public function getKeyvalidity() {
+        return $this->salt;
+    }
 }

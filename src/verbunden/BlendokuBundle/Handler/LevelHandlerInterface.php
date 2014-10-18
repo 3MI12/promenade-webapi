@@ -46,9 +46,10 @@ interface LevelHandlerInterface {
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @param integer $level_id
+     * @param array $parameters
      * @return bool
      */
-    public function solveLevel($level_id);
+    public function solveLevel($level_id, array $parameters);
 
     /**
      * Edit/Create one level given the parameters

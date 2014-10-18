@@ -36,17 +36,17 @@ Interface GameInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param string $starttime
+     * @param string unixtime $timestamp
      * @return Game
      */
-    public function setStarttime($time = "now");
+    public function setStarttime($timestamp);
 
     /**
      * Get starttime
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @return \DateTime 
+     * @return string unixtime   
      */
     public function getStarttime();
 
@@ -55,17 +55,17 @@ Interface GameInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param \DateTime $endtime
+     * @param string unixtime $timestamp
      * @return Game
      */
-    public function setEndtime($time = "now");
+    public function setEndtime($timestamp);
 
     /**
      * Get endtime
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @return \DateTime 
+     * @return string unixtime 
      */
     public function getEndtime();
 

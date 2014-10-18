@@ -33,8 +33,23 @@ interface GameHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
+     * @param integer $level_id
      * @param array $parameters
      * @return array
      */
-    public function solveGame(array $parameters);
+    public function solveGame($level_id, array $parameters);
+    
+    /**
+     * calculate score
+     *
+     * @api
+     *
+     * @author Martin Kuntizsch 2014
+     * @version 1.0
+     * @param  integer $starttime
+     * @param  integer $endtime
+     * @param  integer $complexity
+     * @return integer 
+     */
+    public function calculateGameScore($starttime, $endtime, $complexity);
 }

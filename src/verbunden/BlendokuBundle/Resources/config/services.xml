@@ -6,7 +6,6 @@
 
     <parameters>
         <parameter key="verbunden_blendoku.game.handler.class">verbunden\BlendokuBundle\Handler\GameHandler</parameter>
-        <parameter key="verbunden_blendoku.stats.handler.class">verbunden\BlendokuBundle\Handler\StatsHandler</parameter>
         <parameter key="verbunden_blendoku.user.handler.class">verbunden\BlendokuBundle\Handler\UserHandler</parameter>
         <parameter key="verbunden_blendoku.level.handler.class">verbunden\BlendokuBundle\Handler\LevelHandler</parameter>
         <parameter key="verbunden_blendoku.level.class">verbunden\BlendokuBundle\Entity\Level</parameter>
@@ -22,6 +21,11 @@
         <service id="verbunden_blendoku.game.handler" class="%verbunden_blendoku.game.handler.class%">
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument>%verbunden_blendoku.game.class%</argument>
+            <argument type="service" id="form.factory"></argument>
+        </service>
+        <service id="verbunden_blendoku.user.handler" class="%verbunden_blendoku.user.handler.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%verbunden_blendoku.user.class%</argument>
         </service>
     </services>
 

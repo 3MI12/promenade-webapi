@@ -3,11 +3,11 @@
 namespace verbunden\BlendokuBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Form\FormFactoryInterface;
 use verbunden\BlendokuBundle\Model\GameInterface;
 use verbunden\BlendokuBundle\Model\LevelInterface;
 use verbunden\BlendokuBundle\Form\GameType;
 use verbunden\BlendokuBundle\Exception\InvalidFormException;
+use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * GameHandler
@@ -33,11 +33,11 @@ class GameHandler implements GameHandlerInterface {
      * @param string $entityClass
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(ObjectManager $om, $entityClass) { //, FormFactoryInterface $formFactory){
+    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory){
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
-        //$this->formFactory = $formFactory;
+        $this->formFactory = $formFactory;
     }
 
     /**
@@ -59,7 +59,7 @@ class GameHandler implements GameHandlerInterface {
             $game->setUser($user);
             $game->setLevel($level);
         }
-        $game->setStarttime("now");
+        $game->setStarttime(time());
         $this->om->persist($game);
         $this->om->flush($game);
         return $game;
@@ -73,26 +73,65 @@ class GameHandler implements GameHandlerInterface {
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @param array $parameters
+     * @param integer $level_id
      * @return array
      */
-    public function solveGame(array $parameters) {
-        $game = $this->repository->findOneBy(array('user'=>$parameters['user_id'],'level'=>$parameters['level_id']));
-        if ($game && $game->getStarttime()==$parameters['starttime']) {
-            if($game->getGrid() < $parameters['grid']){
-               if($game->getScore() < $parameters['score']){
-                $game->setScore() = $parameters['score'];
-                $this->om->persist($game);
-                $this->om->flush($game);
+    public function solveGame($level_id, array $parameters) {
+        // get game session object:
+        $game = $this->repository->findOneBy(array('user' => $parameters['user']['id'], 'level' => $level_id));
+        // get level session object:
+        $level = $game->getLevel();
+        // prove that starttime match with game session:
+        if ($game && $game->getStarttime() == $parameters['starttime']) {
+            // prove the level solution:
+            if ($level->getGrid() == $parameters['grid']) {
+                $time=time();
+                // get the level score:
+                $stats=$this->calculateGameScore($game->getStarttime(), $time,  $level->getComplexity());
+                $stats['old_score']=$game->getScore();
+                if($stats['old_score']<=$stats['score']){
+                    $game->setEndtime($time);
+                    $game->setScore($stats['score']);
+                    $this->om->persist($game);
+                    $this->om->flush($game);
                 }
-                return array('level_id' => $parameters['level_id'],'user_id' => $parameters['user_id'],'error'=>'','score'=>$parameters['score'],'solved'=>'y');
+                return array('level_id' => $level_id, 'user_id' => $parameters['user']['id'], 'error' => '', 'score' => $stats['score'], 'solved' => true);
             }
-            return array('level_id' => $parameters['level_id'],'user_id' => $parameters['user_id'],'error'=>'','score'=>'','solved'=>'n');
+            return array('level_id' => $level_id, 'user_id' => $parameters['user']['id'], 'error' => '', 'score' => '', 'solved' => false);
         }
-        return array('level_id' => $parameters['level_id'],'user_id' => $parameters['user_id'],'error'=>'manipulation','score'=>'','solved'=>'');
+        return array('level_id' => $level_id, 'user_id' => $parameters['user']['id'], 'error' => 'manipulation', 'score' => '', 'solved' => false);
     }
-
+    
+    /**
+     * Create new game object
+     *
+     * @api
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return \game
+     */
     protected function createNewGame() {
         return new $this->entityClass();
     }
-
+    
+    /**
+     * calculate score
+     *
+     * @api
+     *
+     * @author Martin Kuntizsch 2014
+     * @version 1.0
+     * @param  integer $starttime
+     * @param  integer $endtime
+     * @param  integer $complexity
+     * @return integer 
+     */
+    public function calculateGameScore($starttime, $endtime, $complexity) {
+        $data['maxtime'] = 30 * $complexity;
+        $data['timediff'] = $endtime - $starttime;
+        $data['score'] = $data['maxtime'] - $data['timediff'];
+        $data['score'] = ($data['score']>=0) ? $data['score']:0;
+        return $data;
+    }
 }

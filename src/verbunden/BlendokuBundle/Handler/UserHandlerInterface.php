@@ -20,11 +20,24 @@ interface UserHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param integer array $parameters
+     * @param  array $parameters
+     * @parm   string $password
      * @return array
      */
-    public function verifyUser(array $parameters);
-
+    public function verifyUser(array $parameters, $password);
+    
+     /**
+     * login a user
+     *
+     * @api
+     *
+     * @author Martin Kuntizsch 2014
+     * @version 1.0
+     * @param  array $parameters
+     * @return string 
+     */
+    public function loginUser(array $parameters);
+    
     /**
      * Show one user given the identifier
      *
@@ -32,10 +45,10 @@ interface UserHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param integer $user_id
+     * @param string $user_name
      * @return array
      */
-    public function showUser($user_id);
+    public function showUser($user_name);
 
     /**
      * Create one user given the parameters
@@ -59,5 +72,5 @@ interface UserHandlerInterface {
      * @param array $parameters
      * @return array
      */
-    public function editUser(array $parameters);
+    public function editPassword(array $parameters);
 }

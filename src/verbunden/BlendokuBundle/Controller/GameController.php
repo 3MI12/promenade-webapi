@@ -70,7 +70,7 @@ class GameController extends FOSRestController {
      * @return array
      * @throws NotFoundHttpException when page not exist
      */
-    public function getNumberShowAction($level_id) {
+    public function getShowAction($level_id) {
         if (!($level = $this->container->get('verbunden_blendoku.level.handler')->showLevel($level_id))) {
             throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $level_id));
         }
@@ -96,7 +96,7 @@ class GameController extends FOSRestController {
      * @return array
      * @throws NotFoundHttpException when page not exist
      */
-    public function getNumberStartAction($level_id) {
+    public function getStartAction($level_id) {
         /* @var $level \ArrayObject */
         if (!($level = $this->container->get('verbunden_blendoku.game.handler')->startGame(array('level' => $level_id, 'user' => '1')))) {
             throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $level_id));
@@ -122,18 +122,15 @@ class GameController extends FOSRestController {
      * @return FormTypeInterface|View
      * @throws NotFoundHttpException when page not exist
      */
-    public function postNumberSolveAction($level_id) {
-        if ($parameters['user_id']=0){
-            if (!($game = $this->container->get('verbunden_blendoku.level.handler')->solveLevel($parameters))) {
-                throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $parameters('level_id')));
-            }
-        }else{
+    public function postSolveAction($level_id, Request $request, ParamFetcherInterface $paramFetcher) {
+        $parameters = $request->request->all();
+        return $this->container->get('verbunden_blendoku.game.handler')->solveGame($level_id, $parameters);
+        if($parameters['grid']){
             if (!($game = $this->container->get('verbunden_blendoku.game.handler')->solveGame($parameters))) {
                 throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $parameters('level_id')));
             }
         }
-        
-        return game;
+        return $game;
     }
 
     /**
@@ -157,7 +154,7 @@ class GameController extends FOSRestController {
      * @param Request               $request      the request object
      * @return FormTypeInterface|View
      */
-    public function postNumberCreateAction($level_id) {
+    public function postCreateAction($level_id) {
         try {
             $newLevel = $this->container->get('verbunden_blendoku.game.handler')->post($request->request->all());
             $routeOptions = array('id' => $createLevel->getId(), '_format' => $request->get('_format'));
@@ -167,30 +164,289 @@ class GameController extends FOSRestController {
         }
     }
 
-    public function getTestCreateAction($level_id) {
-        switch ($level_id) {
-            case 1:
-                $parameters['level_id'] = $level_id;
-                $parameters['set']['52'] = '#d7da2e';
-                $parameters['free']['53'] = '#aab835';
-                $parameters['free']['54'] = '#7d9a38';
-                $parameters['free']['55'] = '#4d7e38';
-                $parameters['set']['56'] = '#006836';
-                $parameters['complexity'] = '2';
-                break;
-            case 2:
-                $parameters['level_id'] = $level_id;
-                $parameters['set']['51'] = '#f3f2f2';
-                $parameters['free']['52'] = '#cbc9c8';
-                $parameters['free']['53'] = '#a7a2a1';
-                $parameters['free']['54'] = '#868180';
-                $parameters['free']['55'] = '#676261';
-                $parameters['set']['56'] = '#4c4948';
-                $parameters['free']['57'] = '#333333';
-                $parameters['complexity'] = '3';
-                break;
+    /**
+     * Create 15 default level.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Creates 15 default level in case no level is set yet.",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     *
+     *
+     * @Annotations\View(
+     *  templateVar="level"
+     * )
+     *
+     * @param Request               $request      the request object
+     * @return FormTypeInterface|View
+     */
+    public function getInitialAction() {
+        $levellist = array();
+        for ($level_id = 1; $level_id < 16; $level_id++) {
+            $parameters=array();
+            switch ($level_id) {
+                case 1:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['52'] = '#d7da2e';
+                    $parameters['free']['53'] = '#aab835';
+                    $parameters['free']['54'] = '#7d9a38';
+                    $parameters['free']['55'] = '#4d7e38';
+                    $parameters['set']['56'] = '#006836';
+                    $parameters['complexity'] = '2';
+                    break;
+                case 2:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['51'] = '#f3f2f2';
+                    $parameters['free']['52'] = '#cbc9c8';
+                    $parameters['free']['53'] = '#a7a2a1';
+                    $parameters['free']['54'] = '#868180';
+                    $parameters['free']['55'] = '#676261';
+                    $parameters['set']['56'] = '#4c4948';
+                    $parameters['free']['57'] = '#333333';
+                    $parameters['complexity'] = '3';
+                    break;
+                case 3:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['43'] = '#fe42322';
+                    $parameters['free']['44'] = '#be223f';
+                    $parameters['free']['45'] = '#932657';
+                    $parameters['free']['46'] = '#62276d';
+                    $parameters['set']['47'] = '#172983';
+                    $parameters['complexity'] = '2';
+                    break;
+                case 4:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['63'] = '#009ee0';
+                    $parameters['free']['64'] = '#00adbe';
+                    $parameters['free']['65'] = '#70bd95';
+                    $parameters['free']['66'] = '#afcc5f';
+                    $parameters['free']['67'] = '#dfdb00';
+                    $parameters['free']['56'] = '#819686';
+                    $parameters['free']['46'] = '#706089';
+                    $parameters['set']['36'] = '#632181';
+                    $parameters['complexity'] = '2';
+                    break;
+                case 5:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['63'] = '#d7da2e';
+                    $parameters['free']['64'] = '#d4d666';
+                    $parameters['free']['65'] = '#d2d38e';
+                    $parameters['free']['66'] = '#ced0b0';
+                    $parameters['free']['67'] = '#cccccb';
+                    $parameters['free']['57'] = '#a7c13a';
+                    $parameters['free']['47'] = '#6ea841';
+                    $parameters['set']['37'] = '#009345';
+                    $parameters['complexity'] = '2';
+                    break;
+                case 6:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['51'] = '#c1272d';
+                    $parameters['free']['52'] = '#b46e59';
+                    $parameters['free']['53'] = '#9da197';
+                    $parameters['set']['43'] = '#6ec6d8';
+                    $parameters['free']['33'] = '#6bb1ce';
+                    $parameters['free']['34'] = '#689ac2';
+                    $parameters['free']['35'] = '#6782b4';
+                    $parameters['free']['36'] = '#6767a4';
+                    $parameters['free']['37'] = '#654d94';
+                    $parameters['set']['38'] = '#633287';
+                    $parameters['complexity'] = '13';
+                    break;
+                case 7:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['free']['63'] = '#f8b334';
+                    $parameters['free']['44'] = '#d2a868';
+                    $parameters['free']['45'] = '#a49b8d';
+                    $parameters['free']['46'] = '#6b8da9';
+                    $parameters['set']['47'] = '#007fc0';
+                    $parameters['free']['55'] = '#8f7554';
+                    $parameters['set']['63'] = '#00632e';
+                    $parameters['free']['64'] = '#4e602c';
+                    $parameters['free']['65'] = '#7a552a';
+                    $parameters['free']['66'] = '#9e4128';
+                    $parameters['free']['67'] = '#bd0a26';
+                    $parameters['complexity'] = '13';
+                    break;
+                case 8:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['63'] = '#ee869a';
+                    $parameters['free']['64'] = '#dc9e8d';
+                    $parameters['free']['65'] = '#c6ae73';
+                    $parameters['free']['66'] = '#acb74f';
+                    $parameters['free']['67'] = '#89ba17';
+                    $parameters['set']['56'] = '#44aca2';
+                    $parameters['free']['46'] = '#009ee0';
+                    $parameters['complexity'] = '13';
+                    break;
+                case 9:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['44'] = '#47b393';
+                    $parameters['free']['45'] = '#87b05e';
+                    $parameters['set']['46'] = '#afac0b';
+                    $parameters['free']['54'] = '#b58961';
+                    $parameters['free']['55'] = '#93755b';
+                    $parameters['free']['56'] = '#736256';
+                    $parameters['set']['64'] = '#e30732';
+                    $parameters['free']['65'] = '#991c4c';
+                    $parameters['set']['66'] = '#46245f';
+                    $parameters['complexity'] = '13';
+                    break;
+                case 10:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['42'] = '#0e1634';
+                    $parameters['free']['52'] = '#3a1b31';
+                    $parameters['set']['62'] = '#733031';
+                    $parameters['free']['53'] = '#542d49';
+                    $parameters['free']['54'] = '#714266';
+                    $parameters['free']['55'] = '#915c87';
+                    $parameters['free']['56'] = '#b47baf';
+                    $parameters['free']['63'] = '#86403c';
+                    $parameters['free']['64'] = '#9c5449';
+                    $parameters['free']['65'] = '#b36a58';
+                    $parameters['free']['66'] = '#cc8369';
+                    $parameters['set']['67'] = '#e69f7c';
+                    $parameters['complexity'] = '13';
+                    break;
+                case 11:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['21'] = '#e7df00';
+                    $parameters['free']['31'] = '#bfce02';
+                    $parameters['free']['41'] = '#91bd1d';
+                    $parameters['free']['51'] = '#58ab2b';
+                    $parameters['free']['22'] = '#c8c12d';
+                    $parameters['free']['23'] = '#aba640';
+                    $parameters['free']['24'] = '#8f8c49';
+                    $parameters['free']['34'] = '#a17e3d';
+                    $parameters['free']['44'] = '#b16831';
+                    $parameters['free']['54'] = '#bf4d27';
+                    $parameters['free']['64'] = '#cd1f20';
+                    $parameters['set']['25'] = '#76754d';
+                    $parameters['free']['35'] = '#6c703a';
+                    $parameters['free']['45'] = '#736d49';
+                    $parameters['set']['26'] = '#5e5f4c';
+                    $parameters['free']['36'] = '#50704f';
+                    $parameters['set']['46'] = '#4c7f69';
+                    $parameters['free']['56'] = '#439085';
+                    $parameters['free']['66'] = '#2fa1a5';
+                    $parameters['set']['28'] = '#484c4a';
+                    $parameters['free']['29'] = '#222d42';
+                    $parameters['free']['39'] = '#5c4457';
+                    $parameters['free']['49'] = '#99626f';
+                    $parameters['set']['59'] = '#de8a8b';
+                    $parameters['complexity'] = '25';
+                    break;
+                case 12:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['51'] = '#293d29';
+                    $parameters['free']['61'] = '#395032';
+                    $parameters['free']['71'] = '#4a6439';
+                    $parameters['free']['62'] = '#534931';
+                    $parameters['free']['63'] = '#623929';
+                    $parameters['free']['74'] = '#73131c';
+                    $parameters['free']['64'] = '#8f1e28';
+                    $parameters['free']['54'] = '#953429';
+                    $parameters['free']['44'] = '#a44d28';
+                    $parameters['set']['34'] = '#be6539';
+                    $parameters['free']['35'] = '#95505a';
+                    $parameters['free']['36'] = '#8c5481';
+                    $parameters['free']['37'] = '#71599e';
+                    $parameters['set']['38'] = '#5d5aa0';
+                    $parameters['set']['48'] = '#696da5';
+                    $parameters['free']['58'] = '#737462';
+                    $parameters['set']['68'] = '#5a3d2a';
+                    $parameters['free']['66'] = '#6b6129';
+                    $parameters['free']['67'] = '#7c8630';
+                    $parameters['set']['69'] = '#94ae39';
+                    $parameters['complexity'] = '25';
+                    break;
+                case 13:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['set']['31'] = '#3968ac';
+                    $parameters['free']['41'] = '#6474ac';
+                    $parameters['free']['51'] = '#948084';
+                    $parameters['set']['61'] = '#c68752';
+                    $parameters['free']['32'] = '#5382be';
+                    $parameters['free']['33'] = '#6a9acd';
+                    $parameters['set']['34'] = '#8bb6cf';
+                    $parameters['free']['44'] = '#727c8c';
+                    $parameters['free']['54'] = '#5a5152';
+                    $parameters['set']['64'] = '#4a3121';
+                    $parameters['free']['74'] = '#3f180f';
+                    $parameters['free']['55'] = '#79515a';
+                    $parameters['free']['65'] = '#5a4028';
+                    $parameters['free']['75'] = '#404713';
+                    $parameters['set']['57'] = '#8d4c5a';
+                    $parameters['free']['67'] = '#6a5129';
+                    $parameters['free']['77'] = '#59591d';
+                    $parameters['free']['47'] = '#d52183';
+                    $parameters['free']['57'] = '#a54d62';
+                    $parameters['free']['67'] = '#8c6939';
+                    $parameters['set']['77'] = '#6c8524';
+                    $parameters['complexity'] = '25';
+                    break;
+                case 14:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['free']['40'] = '#96bf33';
+                    $parameters['free']['50'] = '#6db129';
+                    $parameters['free']['60'] = '#41932c';
+                    $parameters['set']['70'] = '#187131';
+                    $parameters['free']['71'] = '#5c637d';
+                    $parameters['set']['72'] = '#865a9d';
+                    $parameters['free']['41'] = '#83bc5a';
+                    $parameters['free']['42'] = '#7fbf88';
+                    $parameters['free']['43'] = '#79c3af';
+                    $parameters['set']['44'] = '#79cadd';
+                    $parameters['free']['54'] = '#7ec6bb';
+                    $parameters['free']['64'] = '#a4ba83';
+                    $parameters['set']['74'] = '#d4a150';
+                    $parameters['free']['55'] = '#7ac2ac';
+                    $parameters['free']['65'] = '#949e74';
+                    $parameters['free']['75'] = '#b6824a';
+                    $parameters['free']['56'] = '#8ab19c';
+                    $parameters['free']['66'] = '#8d8b6c';
+                    $parameters['free']['67'] = '#8d6139';
+                    $parameters['free']['57'] = '#8e9b84';
+                    $parameters['free']['67'] = '#837563';
+                    $parameters['free']['77'] = '#6b4139';
+                    $parameters['set']['38'] = '#e6ecbd';
+                    $parameters['free']['48'] = '#c5be9c';
+                    $parameters['free']['58'] = '#94886d';
+                    $parameters['free']['68'] = '#735552';
+                    $parameters['free']['37'] = '#cd918b';
+                    $parameters['set']['36'] = '#b33362';
+                    $parameters['free']['26'] = '#a4548c';
+                    $parameters['free']['16'] = '#9471ab';
+                    $parameters['set']['06'] = '#8e93c4';
+                    $parameters['complexity'] = '25';
+                    break;
+                case 15:
+                    $parameters['level_id'] = $level_id;
+                    $parameters['free']['20'] = '#34388c';
+                    $parameters['free']['21'] = '#3e3784';
+                    $parameters['free']['22'] = '#504593';
+                    $parameters['free']['23'] = '#67559c';
+                    $parameters['free']['24'] = '#8b6ca8';
+                    $parameters['free']['25'] = '#a486b9';
+                    $parameters['free']['26'] = '#c4a2c9';
+                    $parameters['set']['27'] = '#debdbc';
+                    $parameters['free']['37'] = '#adb3b6';
+                    $parameters['free']['47'] = '#7cadbb';
+                    $parameters['free']['57'] = '#52a6b5';
+                    $parameters['free']['67'] = '#23a3bd';
+                    $parameters['free']['68'] = '#3c8f84';
+                    $parameters['set']['69'] = '#44714a';
+                    $parameters['free']['59'] = '#32613a';
+                    $parameters['free']['49'] = '#234d20';
+                    $parameters['set']['39'] = '#133918';
+                    $parameters['complexity'] = '25';
+                    break;
+            }
+            array_push($levellist, $this->container->get('verbunden_blendoku.level.handler')->createLevel($parameters));
         }
-        return $this->container->get('verbunden_blendoku.level.handler')->createLevel($parameters);
+        return $levellist;
     }
 
 }

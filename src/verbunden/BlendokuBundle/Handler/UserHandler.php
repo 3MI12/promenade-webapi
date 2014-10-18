@@ -32,11 +32,11 @@ class UserHandler implements UserHandlerInterface {
      * @param string $entityClass
      * @param FormFactoryInterface $formFactory
      */
-    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory) {
+    public function __construct(ObjectManager $om, $entityClass) { //, FormFactoryInterface $formFactory) {
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
-        $this->formFactory = $formFactory;
+        //$this->formFactory = $formFactory;
     }
 
     /**
@@ -46,11 +46,51 @@ class UserHandler implements UserHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param integer array $parameters
+     * @param  array $parameters
+     * @param  $password userpassword
      * @return array
      */
-    public function verifyUser($password) {
+    public function verifyUser(array $parameters, $password) {
         return true;
+    }
+
+    /**
+     * login a user
+     *
+     * @api
+     *
+     * @author Martin Kuntizsch 2014
+     * @version 1.0
+     * @param  array $parameters
+     * @return string 
+     */
+    public function loginUser(array $parameters) {
+        $postData = $this->processForm($page, $parameters, 'POST');
+        $user = showUser($postData['username']);
+        if ($user && verifyUser($user, $postData['password'])) {
+            return generateAccessKey($user);
+        }
+    }
+
+    /**
+     * Processes the form.
+     *
+     * @author Martin Kuntizsch 2014
+     * @param PageInterface $page
+     * @param array         $parameters
+     * @param String        $method
+     *
+     * @return PageInterface
+     *
+     * @throws \Acme\BlogBundle\Exception\InvalidFormException
+     */
+    private function processForm(PageInterface $page, array $parameters, $method = "PUT") {
+        $form = $formFactory->createBuilder()
+                            ->add('name', 'text')
+                            ->add('hash', 'text')
+                            ->getForm();
+        
+        throw new InvalidFormException('Invalid submitted data', $form);
     }
 
     /**
@@ -60,11 +100,11 @@ class UserHandler implements UserHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param integer $user_id
+     * @param string $user_name
      * @return array
      */
-    public function showUser($user_id) {
-        return $this->repository->findOneBy($user_id);
+    public function showUser($user_name) {
+        return $this->repository->findOneByName($user_name);
     }
 
     /**
@@ -81,14 +121,16 @@ class UserHandler implements UserHandlerInterface {
         $user = new User();
         $user->setName($parameters['email']);
         $user->setEmail($parameters['email']);
-        $user->setHash($parameters['password']);
+        $user->setHash(crypt($parameters['password'], $user->getSalt));
+        $user->setAccesskey(md5(uniqid(null, true)));
+        $user->setKeyvalidity($time = "now");
         $this->om->persist($user);
         $this->om->flush($user);
         return $user;
     }
 
     /**
-     * Edit one user given the parameters
+     * Edit one user password given the parameters
      *
      * @api
      *
@@ -97,14 +139,15 @@ class UserHandler implements UserHandlerInterface {
      * @param array $parameters
      * @return array
      */
-    public function editUser(array $parameters) {
+    public function editPassword(array $parameters) {
         $user = $this->repository->findOneBy($parameters['id']);
-        if ($user->verifyUser($parameters['oldpass'])) {
+        if ($user->verifyUser($parameters)) {
             $user->setName($parameters['email']);
             $user->setEmail($parameters['email']);
             $user->setHash($parameters['password']);
             $this->om->persist($user);
             $this->om->flush($user);
+            return array(true);
         }
     }
 

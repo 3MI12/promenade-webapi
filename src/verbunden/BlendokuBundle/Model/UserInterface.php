@@ -107,4 +107,42 @@ Interface UserInterface {
      * @return string 
      */
     public function getSalt();
+    
+    /**
+     * Set accesskey
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param string $accesskey
+     * @return User
+     */
+    public function setAccesskey($accesskey);
+
+    /**
+     * Get accesskey
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return string 
+     */
+    public function getAccesskey();
+    
+    /**
+     * Set keyvalidity
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param \DateTime $keyvalidity
+     * @return User
+     */
+    public function setKeyvalidity($time = "now");
+
+    /**
+     * Get keyvalidity
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return string 
+     */
+    public function getKeyvalidity();
 }

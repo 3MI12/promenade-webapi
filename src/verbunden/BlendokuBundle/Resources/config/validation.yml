@@ -9,7 +9,7 @@ verbunden\BlendokuBundle\Entity\User:
                 max: 200
                 minMessage: "Your name must be at least 4 characters length"
                 maxMessage: "Your name cannot be longer than 200 characters length"
-        password:
+        hash:
             - NotBlank: ~
             - NotNull: ~
             - Length:

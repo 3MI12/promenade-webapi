@@ -38,7 +38,7 @@ class Game implements GameInterface {
     private $level;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      * @author Benjamin Brandt
      * @version 1.0
      * @var start DateTime time of the game
@@ -46,7 +46,7 @@ class Game implements GameInterface {
     private $starttime;
 
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="string", nullable=true)
      * @author Benjamin Brandt
      * @version 1.0
      * @var end DateTime time of the game
@@ -88,12 +88,11 @@ class Game implements GameInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param \DateTime $starttime
+     * @param string unixtime $timestamp
      * @return Game
      */
-    public function setStarttime($time = "now") {
-        $this->starttime = new \DateTime($time);
-
+    public function setStarttime($timestamp) {
+        $this->starttime = $timestamp;
         return $this;
     }
 
@@ -102,7 +101,7 @@ class Game implements GameInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @return \DateTime 
+     * @return string unixtime   
      */
     public function getStarttime() {
         return $this->starttime;
@@ -113,11 +112,11 @@ class Game implements GameInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param \DateTime $endtime
+     * @param string unixtime $timestamp
      * @return Game
      */
-    public function setEndtime($time = "now") {
-        $this->endtime = new \DateTime($time);
+    public function setEndtime($timestamp) {
+        $this->endtime = $timestamp;
 
         return $this;
     }
@@ -127,7 +126,7 @@ class Game implements GameInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @return \DateTime 
+     * @return string unixtime 
      */
     public function getEndtime() {
         return $this->endtime;
