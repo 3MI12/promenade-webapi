@@ -5,5 +5,3 @@ verbunden\BlendokuBundle\Entity\User:
             expose: true
         name:
             expose: true
-        email:
-            expose: true

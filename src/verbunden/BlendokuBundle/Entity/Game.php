@@ -19,8 +19,8 @@ class Game implements GameInterface {
 
     /**
      * @ORM\Id
-     * @ORM\ManyToOne(targetEntity="User", inversedBy="id", cascade={"persist"})
-     * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=false)
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="name", cascade={"persist"})
+     * @ORM\JoinColumn(name="user_name", referencedColumnName="name", nullable=false)
      * @author Benjamin Brandt
      * @version 1.0
      * @var User who played the game
@@ -38,18 +38,18 @@ class Game implements GameInterface {
     private $level;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @author Benjamin Brandt
      * @version 1.0
-     * @var start DateTime time of the game
+     * @var start unix timestamp of the game
      */
     private $starttime;
 
     /**
-     * @ORM\Column(type="string", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @author Benjamin Brandt
      * @version 1.0
-     * @var end DateTime time of the game
+     * @var end unix timestamp of the game
      */
     private $endtime;
 
@@ -60,17 +60,6 @@ class Game implements GameInterface {
      * @var integer
      */
     private $score;
-    
-    /**
-     * get property $id
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return int 
-     */
-    public function getId() {
-        return $this->id;
-    }
 
     /**
      * get property $user
@@ -81,55 +70,6 @@ class Game implements GameInterface {
      */
     public function getUser() {
         return $this->user;
-    }
-
-    /**
-     * Set starttime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string unixtime $timestamp
-     * @return Game
-     */
-    public function setStarttime($timestamp) {
-        $this->starttime = $timestamp;
-        return $this;
-    }
-
-    /**
-     * Get starttime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return string unixtime   
-     */
-    public function getStarttime() {
-        return $this->starttime;
-    }
-
-    /**
-     * Set endtime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string unixtime $timestamp
-     * @return Game
-     */
-    public function setEndtime($timestamp) {
-        $this->endtime = $timestamp;
-
-        return $this;
-    }
-
-    /**
-     * Get endtime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return string unixtime 
-     */
-    public function getEndtime() {
-        return $this->endtime;
     }
 
     /**
@@ -172,6 +112,55 @@ class Game implements GameInterface {
     }
 
     /**
+     * Set starttime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param integer unixtime $timestamp
+     * @return Game
+     */
+    public function setStarttime($timestamp) {
+        $this->starttime = $timestamp;
+        return $this;
+    }
+
+    /**
+     * Get starttime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return integer unixtime   
+     */
+    public function getStarttime() {
+        return $this->starttime;
+    }
+
+    /**
+     * Set endtime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param integer unixtime $timestamp
+     * @return Game
+     */
+    public function setEndtime($timestamp) {
+        $this->endtime = $timestamp;
+
+        return $this;
+    }
+
+    /**
+     * Get endtime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return integer unixtime 
+     */
+    public function getEndtime() {
+        return $this->endtime;
+    }
+
+    /**
      * Set score
      *
      * @author Benjamin Brandt 2014
@@ -180,21 +169,6 @@ class Game implements GameInterface {
      * @return Score
      */
     public function setScore($score) {
-        $this->score = $score;
-
-        return $this;
-    }
-
-    /**
-     * Generate score
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param integer $complexity
-     * @return Level
-     */
-    public function setGenScore($starttime, $endtime) {
-        $score = 1;
         $this->score = $score;
 
         return $this;

@@ -18,15 +18,41 @@ interface UserHandlerInterface {
      *
      * @api
      *
-     * @author Benjamin Brandt 2014
+     * @author Martin Kunitzsch 2014
      * @version 1.0
-     * @param  array $parameters
-     * @parm   string $password
-     * @return array
+     * @parm   string  passwordhash  $hash
+     * @param  string  usersalt      $salt
+     * @param  string  password      $password
+     * @return bool
      */
-    public function verifyUser(array $parameters, $password);
-    
-     /**
+    public function verifyUser($hash, $salt, $password);
+
+    /**
+     * Verify a username by an accesstoken
+     *
+     * @api
+     *
+     * @author Martin Kunitzsch 2014
+     * @version 1.0
+     * @param string $accesstoken
+     * @param string $username
+     * @return string
+     */
+    public function verifyByAccesstoken($accesstoken, $username);
+
+    /**
+     * create accesstoken
+     *
+     * @api
+     *
+     * @author Martin Kunitzsch 2014
+     * @version 1.0
+     * @param  array $user
+     * @return string
+     */
+    public function generateAccesstoken($user);
+
+    /**
      * login a user
      *
      * @api
@@ -34,10 +60,21 @@ interface UserHandlerInterface {
      * @author Martin Kuntizsch 2014
      * @version 1.0
      * @param  array $parameters
-     * @return string 
+     * @return array 
      */
     public function loginUser(array $parameters);
-    
+
+    /**
+     * logout a user
+     *
+     * @api
+     *
+     * @author Martin Kuntizsch 2014
+     * @version 1.0
+     * @param array $parameters
+     */
+    public function logoutUser(array $parameters);
+
     /**
      * Show one user given the identifier
      *
@@ -57,13 +94,14 @@ interface UserHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param array $parameters
+     * @param string $username
+     * @param string $password
      * @return array
      */
-    public function createUser(array $parameters);
+    public function createUser($username,$password);
 
     /**
-     * Edit one user given the parameters
+     * Edit one user password given the parameters
      *
      * @api
      *

@@ -14,25 +14,6 @@ namespace verbunden\BlendokuBundle\Model;
 Interface UserInterface {
 
     /**
-     * construct
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string $salt
-     * @return int 
-     */
-    public function __construct();
-
-    /**
-     * Get id
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return integer 
-     */
-    public function getId();
-
-    /**
      * Set name
      *
      * @author Benjamin Brandt 2014
@@ -50,25 +31,6 @@ Interface UserInterface {
      * @return string 
      */
     public function getName();
-
-    /**
-     * Set email
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string $email
-     * @return User
-     */
-    public function setEmail($email);
-
-    /**
-     * Get email
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return string 
-     */
-    public function getEmail();
 
     /**
      * Set hash
@@ -94,10 +56,9 @@ Interface UserInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param string $hash
      * @return User
      */
-    public function setSalt($salt);
+    public function setSalt();
 
     /**
      * Get salt
@@ -107,42 +68,58 @@ Interface UserInterface {
      * @return string 
      */
     public function getSalt();
-    
+
     /**
-     * Set accesskey
+     * Set accesstoken
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param string $accesskey
      * @return User
      */
-    public function setAccesskey($accesskey);
+    public function setAccesstoken();
 
     /**
-     * Get accesskey
+     * Invalidate accesstoken
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return User
+     */
+    public function invalidateAccesstoken();
+    
+    /**
+     * Get accesstoken
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @return string 
      */
-    public function getAccesskey();
-    
+    public function getAccesstoken();
+
     /**
      * Set keyvalidity
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param \DateTime $keyvalidity
      * @return User
      */
-    public function setKeyvalidity($time = "now");
+    public function setKeyvalidity();
 
+    /**
+     * invalidate keyvalidity
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return User
+     */
+    public function invalidateKeyvalidity();
+            
     /**
      * Get keyvalidity
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @return string 
+     * @return integer unix timestamp $keyvalidity
      */
     public function getKeyvalidity();
 }

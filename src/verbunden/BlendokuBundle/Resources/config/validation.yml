@@ -19,13 +19,6 @@ verbunden\BlendokuBundle\Entity\User:
                 maxMessage: "Your name cannot be longer than 200 characters length"
             - Symfony\Component\Security\Core\Validator\Constraints\UserPassword:
                 message: "Wrong value for your current password"
-        email:
-            - NotBlank: ~
-            - NotNull: ~
-            - Email:
-                message: The email "{{ value }}" is not a valid email.
-                checkMX: true
-                checkHost: true
 
 verbunden\BlendokuBundle\Entity\Level:
     properties:

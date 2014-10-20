@@ -69,7 +69,7 @@ class UserController extends FOSRestController {
      */
     public function postLoginAction(Request $request, ParamFetcherInterface $paramFetcher) {
         $accessKey = $this->container->get('verbunden_blendoku.user.handler')->loginUser($request->request->all());
-        return array("accessKey" => $accessKey);
+        return $accessKey;
     }
 
     /**
@@ -93,8 +93,40 @@ class UserController extends FOSRestController {
      * @throws NotFoundHttpException when page not exist
      */
     public function postLogoutAction(Request $request, ParamFetcherInterface $paramFetcher) {
-        $accessKey = $this->container->get('verbunden_blendoku.user.handler')->loginUser($request->request->all());
-        return array("accessKey" => $accessKey);
+        return $accessKey = $this->container->get('verbunden_blendoku.user.handler')->logoutUser($request->request->all());
     }
-
+	
+	/**
+     * Create 15 default level.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   description = "Creates a random user for development",
+     *   statusCodes = {
+     *     200 = "Returned when successful",
+     *   }
+     * )
+     *
+     *
+     * @Annotations\View(
+     *  templateVar="user"
+     * )
+     *
+     * @param Request               $request      the request object
+     * @return $userlist
+     */
+    public function getInitialAction() {
+		$userlist = array();
+		
+		$parameters = array();
+		$parameters['name'] = 'martin';
+		$parameters['password'] = 'geheim';
+		$parameters['accesstoken'] =  md5(uniqid(null, true));
+		$parameters['hash'] = crypt($parameters['password'], md5(uniqid(null,true)));
+		$parameters['keyvalidity'] = new \DateTime($time='now');
+		
+		array_push($userlist, $this->container->get('verbunden_blendoku.user.handler')->createUser($parameters));
+		
+		return $userlist;
+	}
 }

@@ -44,14 +44,56 @@ class UserHandler implements UserHandlerInterface {
      *
      * @api
      *
+     * @author Martin Kunitzsch 2014
+     * @version 1.0
+     * @parm   string  passwordhash  $hash
+     * @param  string  usersalt      $salt
+     * @param  string  usersalt      $name
+     * @return bool
+     */
+    public function verifyUser($hash, $salt, $password) {
+        $hashPost = crypt($password, $salt);
+        if ($hash == $hashPost) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Verify a username by an accesstoken
+     *
+     * @api
+     *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param  array $parameters
-     * @param  $password userpassword
-     * @return array
+     * @param string $accesstoken
+     * @param string $username
+     * @return object $user
      */
-    public function verifyUser(array $parameters, $password) {
-        return true;
+    public function verifyByAccesstoken($accesstoken, $username) {
+        $user = $this->repository->findOneByName($username);
+        if ($user && $accesstoken == $user->getAccesstoken()) {
+            return $user;
+        }
+        return NULL;
+    }
+
+    /**
+     * create accesstoken
+     *
+     * @api
+     *
+     * @author Martin Kunitzsch 2014
+     * @version 1.0
+     * @param  array $user
+     * @return string
+     */
+    public function generateAccesstoken($user) {
+        $user->setAccesstoken();
+        $user->setKeyvalidity();
+        $this->om->persist($user);
+        $this->om->flush($user);
+        return $user;
     }
 
     /**
@@ -59,38 +101,52 @@ class UserHandler implements UserHandlerInterface {
      *
      * @api
      *
-     * @author Martin Kuntizsch 2014
+     * @author Benjamin Brandt 2014
      * @version 1.0
      * @param  array $parameters
-     * @return string 
+     * @return array 
      */
     public function loginUser(array $parameters) {
-        $postData = $this->processForm($page, $parameters, 'POST');
-        $user = showUser($postData['username']);
-        if ($user && verifyUser($user, $postData['password'])) {
-            return generateAccessKey($user);
+        $username=$this->postedNameLen($parameters['user']['name']);
+        $user = $this->showUser($username);
+        $password=$this->postedPasswordLen($parameters['user']['password']);
+        if ($user) {
+            if ($this->verifyUser($user->getHash(), $user->getSalt(), $password)) {
+                $user = $this->generateAccesstoken($user);
+                return array('name' => $user->getName(),'accesstoken' => $user->getAccesstoken(), 'time' => $user->getKeyvalidity(), 'status' => 'loggedin');
+            } else {
+                return array('name' => $user->getName(),'accesstoken' => '-', 'time' => ' ', 'status' => 'wrong_password');
+            }
+        } elseif ($username && $password){
+            $user= $this->createUser($username,$password);
+            return array('name' => $user->getName(),'accesstoken' => $user->getAccesstoken(), 'time' => $user->getKeyvalidity(), 'status' => 'loggedin');
+        } elseif (!$password) {
+            return array('name' => '-','accesstoken' => '-', 'time' => '-', 'status' => 'short_password');
+        } elseif (!$username) {
+            return array('name' => '-','accesstoken' => '-', 'time' => '-', 'status' => 'short_username');
         }
     }
 
     /**
-     * Processes the form.
+     * logout a user
+     *
+     * @api
      *
      * @author Martin Kuntizsch 2014
-     * @param PageInterface $page
-     * @param array         $parameters
-     * @param String        $method
-     *
-     * @return PageInterface
-     *
-     * @throws \Acme\BlogBundle\Exception\InvalidFormException
+     * @version 1.0
+     * @param array $parameters
      */
-    private function processForm(PageInterface $page, array $parameters, $method = "PUT") {
-        $form = $formFactory->createBuilder()
-                            ->add('name', 'text')
-                            ->add('hash', 'text')
-                            ->getForm();
-        
-        throw new InvalidFormException('Invalid submitted data', $form);
+    public function logoutUser(array $parameters) {
+        $username=$this->postedNameLen($parameters['user']['name']);
+        $user = $this->verifyByAccesstoken($parameters['user']['accesstoken'], $username);
+        if ($user) {
+            $user->invalidateAccesstoken();
+            $user->invalidateKeyvalidity();
+            $this->om->persist($user);
+            $this->om->flush($user);
+            return array('name' => $user->getName(),'accesstoken' => ' ', 'time' => ' ', 'status' => 'loggedout');
+        }
+        return array('name' => $username,'accesstoken' => ' ','error' => 'user_or_accesstoken_not_exists','status' => 'failed');
     }
 
     /**
@@ -114,16 +170,17 @@ class UserHandler implements UserHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param array $parameters
-     * @return array
+     * @para sting $username
+     * @parm string $password
+     * @return array user object
      */
-    public function createUser(array $parameters) {
-        $user = new User();
-        $user->setName($parameters['email']);
-        $user->setEmail($parameters['email']);
-        $user->setHash(crypt($parameters['password'], $user->getSalt));
-        $user->setAccesskey(md5(uniqid(null, true)));
-        $user->setKeyvalidity($time = "now");
+    public function createUser($username,$password) {
+        $user = $this->createNewUser();
+        $user->setName($username);
+        $user->setSalt();
+        $user->setAccesstoken();
+        $user->setKeyvalidity();
+        $user->setHash(crypt($password, $user->getSalt()));
         $this->om->persist($user);
         $this->om->flush($user);
         return $user;
@@ -141,10 +198,9 @@ class UserHandler implements UserHandlerInterface {
      */
     public function editPassword(array $parameters) {
         $user = $this->repository->findOneBy($parameters['id']);
-        if ($user->verifyUser($parameters)) {
-            $user->setName($parameters['email']);
-            $user->setEmail($parameters['email']);
-            $user->setHash($parameters['password']);
+        if ($user) {
+            $user->setName($parameters['user']['name']);
+            $user->setHash($parameters['user']['password']);
             $this->om->persist($user);
             $this->om->flush($user);
             return array(true);
@@ -154,5 +210,39 @@ class UserHandler implements UserHandlerInterface {
     protected function createNewUser() {
         return new $this->entityClass();
     }
-
+    
+    /**
+     * Validate posted Username
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param  string $string
+     * @return string $string
+     */
+    protected function postedNameLen($string) {
+        if (strlen($string) < 5){
+            $string = NULL;
+        }else{
+            $string = strtolower($string);
+        }
+        if ($string == 'admin' || $string == 'guest'){
+            $string = NULL;
+        }
+        return $string;
+    }
+    
+    /**
+     * Validate posted Password
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param  string $string
+     * @return string $string
+     */
+    protected function postedPasswordLen($string) {
+        if (strlen($string) < 5){
+            $string = NULL;
+        }
+        return $string;
+    }
 }

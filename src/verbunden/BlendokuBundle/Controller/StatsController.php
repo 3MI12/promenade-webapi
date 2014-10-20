@@ -2,8 +2,6 @@
 
 namespace verbunden\BlendokuBundle\Controller;
 
-#use verbunden\BlendokuBundle\Form\NoteType;
-use verbunden\BlendokuBundle\Entity\Game;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
@@ -14,6 +12,8 @@ use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use verbunden\BlendokuBundle\Exception\InvalidFormException;
+use verbunden\BlendokuBundle\GameInterface;
 
 /**
  * Rest controller for Blendoku
@@ -46,32 +46,26 @@ class StatsController extends FOSRestController {
      * @return array
      */
     public function getHighscoreAction() {
-        return $this->container->get('doctrine.entity_manager')->getRepository('Game')->findAll();
+        return $this->container->get('verbunden_blendoku.game.handler')->calculateHighScore();
     }
 
     /**
-     * Get user highscore.
+     * Get the Score of a User
      *
      * @ApiDoc(
      *   resource = true,
      *   statusCodes = {
-     *     200 = "Returned when successful"
+     *     204 = "Returned when successful",
+     *     400 = "Returned when the request has errors"
      *   }
      * )
-     *
-     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing level.")
-     *
-     * @Annotations\View(
-     *  templateVar="level"
-     * )
-     *
+     * @author Benjamin Brandt
+     * @version 1.0
      * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
-     *
      * @return array
      */
-    public function getUserscoreAction($user_id) {
-        return $this->container->get('doctrine.entity_manager')->getRepository('Game')->findAllByUser_id($user_id);
+    public function getUserscoreAction($user_name) {
+        return $this->container->get('verbunden_blendoku.game.handler')->calculateUserScore($user_name);
     }
 
 }

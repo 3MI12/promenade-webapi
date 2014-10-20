@@ -10,6 +10,9 @@ use FOS\RestBundle\View\RouteRedirectView;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Symfony\Component\HttpFoundation\HeaderBag;
+
 use Symfony\Component\Form\FormTypeInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use verbunden\BlendokuBundle\Exception\InvalidFormException;
@@ -86,7 +89,6 @@ class GameController extends FOSRestController {
      *   output = "verbunden\BlendokuBundle\Entity\Level",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     404 = "Returned when the level is not found"
      *   }
      * )
      *
@@ -94,14 +96,12 @@ class GameController extends FOSRestController {
      * @version 1.0
      * @param int     $level_id      the level id
      * @return array
-     * @throws NotFoundHttpException when page not exist
      */
-    public function getStartAction($level_id) {
-        /* @var $level \ArrayObject */
-        if (!($level = $this->container->get('verbunden_blendoku.game.handler')->startGame(array('level' => $level_id, 'user' => '1')))) {
-            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $level_id));
-        }
-        return $level;
+    public function getStartAction($level_id, Request $request) {
+        $parameters['user']['name'] = $request->headers->get('name');
+        $parameters['user']['accesstoken'] = $request->headers->get('accesstoken');
+        $parameters['level']['id'] = $level_id;
+        return $this->container->get('verbunden_blendoku.game.handler')->startGame($parameters);
     }
 
     /**
@@ -112,25 +112,20 @@ class GameController extends FOSRestController {
      *   input = "verbunden\BlendokuBundle\Form\GameType",
      *   statusCodes = {
      *     204 = "Returned when successful",
-     *     400 = "Returned when the request has errors"
      *   }
      * )
      * @author Benjamin Brandt
      * @version 1.0
      * @param Request               $request      the request object
      * @param ParamFetcherInterface $paramFetcher param fetcher service
-     * @return FormTypeInterface|View
-     * @throws NotFoundHttpException when page not exist
+     * @return array
      */
     public function postSolveAction($level_id, Request $request, ParamFetcherInterface $paramFetcher) {
         $parameters = $request->request->all();
-        return $this->container->get('verbunden_blendoku.game.handler')->solveGame($level_id, $parameters);
-        if($parameters['grid']){
-            if (!($game = $this->container->get('verbunden_blendoku.game.handler')->solveGame($parameters))) {
-                throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $parameters('level_id')));
-            }
-        }
-        return $game;
+        $parameters['user']['name'] = $request->headers->get('name');
+        $parameters['user']['accesstoken'] = $request->headers->get('accesstoken');
+        $parameters['level']['id'] = $level_id;
+        return $this->container->get('verbunden_blendoku.game.handler')->solveGame($parameters);
     }
 
     /**

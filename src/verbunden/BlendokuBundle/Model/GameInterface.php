@@ -14,15 +14,6 @@ namespace verbunden\BlendokuBundle\Model;
 Interface GameInterface {
 
     /**
-     * get property $id
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return int 
-     */
-    public function getId();
-
-    /**
      * get property $user
      *
      * @author Benjamin Brandt 2014
@@ -30,44 +21,6 @@ Interface GameInterface {
      * @return User 
      */
     public function getUser();
-
-    /**
-     * Set starttime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string unixtime $timestamp
-     * @return Game
-     */
-    public function setStarttime($timestamp);
-
-    /**
-     * Get starttime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return string unixtime   
-     */
-    public function getStarttime();
-
-    /**
-     * Set endtime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string unixtime $timestamp
-     * @return Game
-     */
-    public function setEndtime($timestamp);
-
-    /**
-     * Get endtime
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return string unixtime 
-     */
-    public function getEndtime();
 
     /**
      * Set user
@@ -99,6 +52,44 @@ Interface GameInterface {
     public function getLevel();
 
     /**
+     * Set starttime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param integer unixtime $timestamp
+     * @return Game
+     */
+    public function setStarttime($timestamp);
+
+    /**
+     * Get starttime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return integer unixtime   
+     */
+    public function getStarttime();
+
+    /**
+     * Set endtime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param integer unixtime $timestamp
+     * @return Game
+     */
+    public function setEndtime($timestamp);
+
+    /**
+     * Get endtime
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return integer unixtime 
+     */
+    public function getEndtime();
+
+    /**
      * Set score
      *
      * @author Benjamin Brandt 2014
@@ -107,16 +98,6 @@ Interface GameInterface {
      * @return Score
      */
     public function setScore($score);
-
-    /**
-     * Generate score
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param integer $complexity
-     * @return Level
-     */
-    public function setGenScore($starttime, $endtime);
 
     /**
      * Get score

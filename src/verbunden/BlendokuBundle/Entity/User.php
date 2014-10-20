@@ -16,31 +16,14 @@ use verbunden\BlendokuBundle\Model\UserInterface;
 class User implements UserInterface {
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string", length=200)
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
      * @ORM\OneToMany(targetEntity="Game", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @var integer
-     */
-    private $id;
-
-    /**
-     * @ORM\Column(type="string", length=200, nullable=false, unique=true)
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @var string
      */
     private $name;
-
-    /**
-     * @ORM\Column(type="string", length=200, nullable=false, unique=true)
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @var string
-     */
-    private $email;
 
     /**
      * @ORM\Column(type="string", length=300, nullable=false)
@@ -64,38 +47,17 @@ class User implements UserInterface {
      * @version 1.0
      * @var string
      */
-    private $accesskey;
+    private $accesstoken;
     
     /**
-     * @ORM\Column(type="datetime", nullable=true)
+     * @ORM\Column(type="integer", nullable=true)
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @var string
+     * @var integer
      */
     private $keyvalidity;
     
-    /**
-     * construct
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string $salt
-     * @return int 
-     */
-    public function __construct() {
-        $this->salt = "$6$rounds=10000$".md5(uniqid(null,true));
-    }
 
-    /**
-     * Get id
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return integer 
-     */
-    public function getId() {
-        return $this->id;
-    }
 
     /**
      * Set name
@@ -120,31 +82,6 @@ class User implements UserInterface {
      */
     public function getName() {
         return $this->name;
-    }
-
-    /**
-     * Set email
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param string $email
-     * @return User
-     */
-    public function setEmail($email) {
-        $this->email = $email;
-
-        return $this;
-    }
-
-    /**
-     * Get email
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @return string 
-     */
-    public function getEmail() {
-        return $this->email;
     }
 
     /**
@@ -177,11 +114,10 @@ class User implements UserInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param string $salt
      * @return User
      */
-    public function setSalt($salt) {
-        $this->hash = $salt;
+    public function setSalt() {
+        $this->salt = '$6$rounds=10000$'.md5(uniqid(null,true));
 
         return $this;
     }
@@ -198,28 +134,40 @@ class User implements UserInterface {
     }
 
     /**
-     * Set accesskey
+     * Set accesstoken
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param string $accesskey
      * @return User
      */
-    public function setAccesskey($accesskey) {
-        $this->hash = $accesskey;
+    public function setAccesstoken() {
+        $this->accesstoken = md5(uniqid(null,true));
 
         return $this;
     }
 
     /**
-     * Get accesskey
+     * Invalidate accesstoken
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return User
+     */
+    public function invalidateAccesstoken() {
+        $this->accesstoken = NULL;
+
+        return $this;
+    }
+    
+    /**
+     * Get accesstoken
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @return string 
      */
-    public function getAccesskey() {
-        return $this->salt;
+    public function getAccesstoken() {
+        return $this->accesstoken;
     }
     
     /**
@@ -227,23 +175,35 @@ class User implements UserInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param \DateTime $keyvalidity
      * @return User
      */
-    public function setKeyvalidity($time = "now") {
-        $this->keyvalidity = new \DateTime($time);
+    public function setKeyvalidity() {
+        $this->keyvalidity = time() + 60*60;
 
         return $this;
     }
 
     /**
+     * invalidate keyvalidity
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @return User
+     */
+    public function invalidateKeyvalidity() {
+        $this->keyvalidity = 0;
+
+        return $this;
+    }
+    
+    /**
      * Get keyvalidity
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @return string 
+     * @return integer unix timestamp $keyvalidity
      */
     public function getKeyvalidity() {
-        return $this->salt;
+        return $this->keyvalidity;
     }
 }

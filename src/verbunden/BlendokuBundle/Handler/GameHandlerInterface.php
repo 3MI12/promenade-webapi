@@ -37,7 +37,7 @@ interface GameHandlerInterface {
      * @param array $parameters
      * @return array
      */
-    public function solveGame($level_id, array $parameters);
+    public function solveGame(array $parameters);
     
     /**
      * calculate score
@@ -52,4 +52,27 @@ interface GameHandlerInterface {
      * @return integer 
      */
     public function calculateGameScore($starttime, $endtime, $complexity);
+    
+    /**
+     * calculate user score
+     *
+     * @api
+     *
+     * @author Martin Kuntizsch 2014
+     * @version 1.0
+     * @param  string $username
+     * @return array 
+     */
+    public function calculateUserScore($username);
+    
+    /**
+     * calculate highscore
+     *
+     * @api
+     *
+     * @author Martin Kuntizsch 2014
+     * @version 1.0
+     * @return array 
+     */
+    public function calculateHighScore();
 }
