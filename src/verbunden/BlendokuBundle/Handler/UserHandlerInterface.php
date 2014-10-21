@@ -12,52 +12,10 @@ use verbunden\BlendokuBundle\Model\UserInterface;
  * @version 1.0
  */
 interface UserHandlerInterface {
-
-    /**
-     * Verify a user given the parameters
-     *
-     * @api
-     *
-     * @author Martin Kunitzsch 2014
-     * @version 1.0
-     * @parm   string  passwordhash  $hash
-     * @param  string  usersalt      $salt
-     * @param  string  password      $password
-     * @return bool
-     */
-    public function verifyUser($hash, $salt, $password);
-
-    /**
-     * Verify a username by an accesstoken
-     *
-     * @api
-     *
-     * @author Martin Kunitzsch 2014
-     * @version 1.0
-     * @param string $accesstoken
-     * @param string $username
-     * @return string
-     */
-    public function verifyByAccesstoken($accesstoken, $username);
-
-    /**
-     * create accesstoken
-     *
-     * @api
-     *
-     * @author Martin Kunitzsch 2014
-     * @version 1.0
-     * @param  array $user
-     * @return string
-     */
-    public function generateAccesstoken($user);
-
     /**
      * login a user
      *
-     * @api
-     *
-     * @author Martin Kuntizsch 2014
+     * @author Benjamin Brandt 2014
      * @version 1.0
      * @param  array $parameters
      * @return array 
@@ -67,9 +25,7 @@ interface UserHandlerInterface {
     /**
      * logout a user
      *
-     * @api
-     *
-     * @author Martin Kuntizsch 2014
+     * @author Benjamin Brandt 2014
      * @version 1.0
      * @param array $parameters
      */
@@ -77,8 +33,6 @@ interface UserHandlerInterface {
 
     /**
      * Show one user given the identifier
-     *
-     * @api
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
@@ -89,21 +43,17 @@ interface UserHandlerInterface {
 
     /**
      * Create one user given the parameters
-     *
-     * @api
-     *
+     * 
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param string $username
-     * @param string $password
-     * @return array
+     * @para sting $username
+     * @parm string $password
+     * @return array user object
      */
-    public function createUser($username,$password);
+    public function createUser($username, $password);
 
     /**
-     * Edit one user password given the parameters
-     *
-     * @api
+     * Edit user password
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
@@ -111,4 +61,5 @@ interface UserHandlerInterface {
      * @return array
      */
     public function editPassword(array $parameters);
+    
 }

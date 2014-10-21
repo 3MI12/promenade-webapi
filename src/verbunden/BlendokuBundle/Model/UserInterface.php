@@ -86,7 +86,7 @@ Interface UserInterface {
      * @return User
      */
     public function invalidateAccesstoken();
-    
+
     /**
      * Get accesstoken
      *
@@ -113,7 +113,7 @@ Interface UserInterface {
      * @return User
      */
     public function invalidateKeyvalidity();
-            
+
     /**
      * Get keyvalidity
      *

@@ -48,7 +48,7 @@ class User implements UserInterface {
      * @var string
      */
     private $accesstoken;
-    
+
     /**
      * @ORM\Column(type="integer", nullable=true)
      * @author Benjamin Brandt 2014
@@ -56,8 +56,6 @@ class User implements UserInterface {
      * @var integer
      */
     private $keyvalidity;
-    
-
 
     /**
      * Set name
@@ -117,7 +115,7 @@ class User implements UserInterface {
      * @return User
      */
     public function setSalt() {
-        $this->salt = '$6$rounds=10000$'.md5(uniqid(null,true));
+        $this->salt = '$6$rounds=10000$' . md5(uniqid(null, true));
 
         return $this;
     }
@@ -141,7 +139,7 @@ class User implements UserInterface {
      * @return User
      */
     public function setAccesstoken() {
-        $this->accesstoken = md5(uniqid(null,true));
+        $this->accesstoken = md5(uniqid(null, true));
 
         return $this;
     }
@@ -158,7 +156,7 @@ class User implements UserInterface {
 
         return $this;
     }
-    
+
     /**
      * Get accesstoken
      *
@@ -169,7 +167,7 @@ class User implements UserInterface {
     public function getAccesstoken() {
         return $this->accesstoken;
     }
-    
+
     /**
      * Set keyvalidity
      *
@@ -178,7 +176,7 @@ class User implements UserInterface {
      * @return User
      */
     public function setKeyvalidity() {
-        $this->keyvalidity = time() + 60*60;
+        $this->keyvalidity = time() + 60 * 60;
 
         return $this;
     }
@@ -195,7 +193,7 @@ class User implements UserInterface {
 
         return $this;
     }
-    
+
     /**
      * Get keyvalidity
      *
@@ -206,4 +204,5 @@ class User implements UserInterface {
     public function getKeyvalidity() {
         return $this->keyvalidity;
     }
+
 }

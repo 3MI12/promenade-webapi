@@ -15,64 +15,70 @@ use verbunden\BlendokuBundle\Model\GameInterface;
 interface GameHandlerInterface {
 
     /**
-     * Start a game given the level identifier
-     *
-     * @api
+     * List level with userscore
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param integer $level_id
-     * @return array
+     * @param string $username
+     * @param string $accesstoken
+     * @param string $limit
+     * @param string $offset
+     * @return array queryresult
+     */
+    public function listGames($username, $accesstoken, $offset, $limit = 15);
+
+    /**
+     * Start a level
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param array $parameters
+     * @return array game object
      */
     public function startGame(array $parameters);
 
     /**
-     * Solve a game given the level identifier
+     * Solve a level
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param array $parameters
+     * @return array status
+     */
+    public function solveGame(array $parameters);
+
+    /**
+     * get the global High Score
      *
      * @api
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param integer $level_id
-     * @param array $parameters
-     * @return array
+     * @param  integer $limit
+     * @param  integer $offset
+     * @return array 
      */
-    public function solveGame(array $parameters);
-    
+    public function highScore($limit, $offset);
+
+    /**
+     * get the score of one user
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param  string $username
+     * @return integer 
+     */
+    public function userScore($username);
+
     /**
      * calculate score
-     *
-     * @api
      *
      * @author Martin Kuntizsch 2014
      * @version 1.0
      * @param  integer $starttime
      * @param  integer $endtime
      * @param  integer $complexity
-     * @return integer 
+     * @return array 
      */
     public function calculateGameScore($starttime, $endtime, $complexity);
-    
-    /**
-     * calculate user score
-     *
-     * @api
-     *
-     * @author Martin Kuntizsch 2014
-     * @version 1.0
-     * @param  string $username
-     * @return array 
-     */
-    public function calculateUserScore($username);
-    
-    /**
-     * calculate highscore
-     *
-     * @api
-     *
-     * @author Martin Kuntizsch 2014
-     * @version 1.0
-     * @return array 
-     */
-    public function calculateHighScore();
 }

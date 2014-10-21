@@ -3,10 +3,8 @@
 namespace verbunden\BlendokuBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Symfony\Component\Form\FormFactoryInterface;
+
 use verbunden\BlendokuBundle\Model\LevelInterface;
-use verbunden\BlendokuBundle\Form\LevelType;
-use verbunden\BlendokuBundle\Exception\InvalidFormException;
 
 /**
  * LevelHandler
@@ -24,25 +22,19 @@ class LevelHandler implements LevelHandlerInterface {
     /**
      * construct
      *
-     * @api
-     *
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @param ObjectManager $om
      * @param string $entityClass
-     * @param FormFactoryInterface $formFactory
      */
-    public function __construct(ObjectManager $om, $entityClass) { //, FormFactoryInterface $formFactory){
+    public function __construct(ObjectManager $om, $entityClass) { 
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
-        //$this->formFactory = $formFactory;
     }
 
     /**
      * List all level
-     *
-     * @api
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
@@ -50,14 +42,12 @@ class LevelHandler implements LevelHandlerInterface {
      * @param int $offset starting from the offset
      * @return array
      */
-    public function listLevel($limit = 5, $offset = 0) {
+    public function listLevel($limit = 15, $offset = 0) {
         return $this->repository->findBy(array(), null, $limit, $offset);
     }
 
     /**
      * Get one level given the identifier
-     *
-     * @api
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
@@ -69,9 +59,7 @@ class LevelHandler implements LevelHandlerInterface {
     }
 
     /**
-     * Verify one level given the parameters
-     *
-     * @api
+     * Check a level solution
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
@@ -165,7 +153,7 @@ class LevelHandler implements LevelHandlerInterface {
         $em->flush();
         return $level;
     }
-    
+
     /**
      * Create empty level object
      *

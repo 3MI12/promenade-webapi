@@ -24,7 +24,7 @@ interface LevelHandlerInterface {
      * @param int $offset starting from the offset
      * @return array
      */
-    public function listLevel($limit = 5, $offset = 0);
+    public function listLevel($limit = 15, $offset = 0);
 
     /**
      * Show one level given the identifier

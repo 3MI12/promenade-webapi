@@ -1,7 +1,5 @@
 verbunden\BlendokuBundle\Entity\User:
     exclusion_policy: ALL
     properties:
-        id:
-            expose: true
         name:
             expose: true

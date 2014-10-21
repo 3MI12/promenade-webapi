@@ -5,18 +5,12 @@ namespace verbunden\BlendokuBundle\Controller;
 use FOS\RestBundle\Util\Codes;
 use FOS\RestBundle\Controller\Annotations;
 use FOS\RestBundle\Controller\FOSRestController;
-use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\RouteRedirectView;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 use FOS\RestBundle\View\View;
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
-use Symfony\Component\HttpFoundation\HeaderBag;
 
-use Symfony\Component\Form\FormTypeInterface;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use verbunden\BlendokuBundle\Exception\InvalidFormException;
-use verbunden\BlendokuBundle\Form\GameType;
 use verbunden\BlendokuBundle\GameInterface;
 
 /**
@@ -28,30 +22,34 @@ use verbunden\BlendokuBundle\GameInterface;
 class GameController extends FOSRestController {
 
     /**
-     * List all level.
+     * List all level with score per user.
      *
      * @ApiDoc(
      *   resource = true,
+     *   description = "List all level with score per user.",
      *   statusCodes = {
      *     200 = "Returned when successful"
      *   }
      * )
      *
      * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing level.")
-     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many level to return.")
-     *
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="15", description="How many level to return.")
+     * 
      * @author Benjamin Brandt
      * @version 1.0
-     * @param Request               $request      the request object
-     * @param ParamFetcherInterface $paramFetcher param fetcher service
+     * @param   string     $user_name    The name of the searched user.
+     * @param   Request    $request      the request object
+     * @param   ParamFetcherInterface $paramFetcher param fetcher service
      *
-     * @return array
+     * @return array list of searched level.
      */
-    public function getListAction(Request $request, ParamFetcherInterface $paramFetcher) {
+    public function getListAction($user_name, Request $request, ParamFetcherInterface $paramFetcher) {
+        $user_name = $request->headers->get('name');
+        $accesstoken = $request->headers->get('accesstoken');
         $offset = $paramFetcher->get('offset');
         $offset = null == $offset ? 0 : $offset;
         $limit = $paramFetcher->get('limit');
-        return $this->container->get('verbunden_blendoku.level.handler')->listLevel($limit, $offset);
+        return $this->container->get('verbunden_blendoku.game.handler')->listGames($user_name, $accesstoken, $offset, $limit);
     }
 
     /**
@@ -97,7 +95,7 @@ class GameController extends FOSRestController {
      * @param int     $level_id      the level id
      * @return array
      */
-    public function getStartAction($level_id, Request $request) {
+    public function getStartAction($level_id, Request $request, ParamFetcherInterface $paramFetcher) {
         $parameters['user']['name'] = $request->headers->get('name');
         $parameters['user']['accesstoken'] = $request->headers->get('accesstoken');
         $parameters['level']['id'] = $level_id;
@@ -114,6 +112,9 @@ class GameController extends FOSRestController {
      *     204 = "Returned when successful",
      *   }
      * )
+     * 
+     * @Annotations\RequestParam(name="post", requirements="\d+", default="file", description="JSON file with solved Level.")
+     * 
      * @author Benjamin Brandt
      * @version 1.0
      * @param Request               $request      the request object
@@ -137,17 +138,11 @@ class GameController extends FOSRestController {
      *   input = "verbunden\BlendokuBundle\Form\GameType",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     400 = "Returned when the form has errors"
      *   }
      * )
      *
-     *
-     * @Annotations\View(
-     *  templateVar="level"
-     * )
-     *
      * @param Request               $request      the request object
-     * @return FormTypeInterface|View
+     * @return array
      */
     public function postCreateAction($level_id) {
         try {
@@ -181,7 +176,7 @@ class GameController extends FOSRestController {
     public function getInitialAction() {
         $levellist = array();
         for ($level_id = 1; $level_id < 16; $level_id++) {
-            $parameters=array();
+            $parameters = array();
             switch ($level_id) {
                 case 1:
                     $parameters['level_id'] = $level_id;

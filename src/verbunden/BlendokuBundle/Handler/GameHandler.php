@@ -3,11 +3,9 @@
 namespace verbunden\BlendokuBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
+
 use verbunden\BlendokuBundle\Model\GameInterface;
 use verbunden\BlendokuBundle\Model\LevelInterface;
-use verbunden\BlendokuBundle\Form\GameType;
-use verbunden\BlendokuBundle\Exception\InvalidFormException;
-use Symfony\Component\Form\FormFactoryInterface;
 
 /**
  * GameHandler
@@ -25,127 +23,15 @@ class GameHandler implements GameHandlerInterface {
     /**
      * construct
      *
-     * @api
-     *
      * @author Benjamin Brandt 2014
      * @version 1.0
      * @param ObjectManager $om
      * @param string $entityClass
-     * @param FormFactoryInterface $formFactory
      */
-    public function __construct(ObjectManager $om, $entityClass, FormFactoryInterface $formFactory) {
+    public function __construct(ObjectManager $om, $entityClass) {
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
-        $this->formFactory = $formFactory;
-    }
-
-    /**
-     * Start one level given the identifier
-     *
-     * @api
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param array $parameters
-     * @return array
-     */
-    public function startGame(array $parameters) {
-        $name = $this->postedNameLen($parameters['user']['name']);
-        $id = $parameters['level']['id'];
-        $accesstoken = $parameters['user']['accesstoken'];
-        if(!$name || !$accesstoken){
-            return array('error' => 'no_input');
-        }
-        $user = $this->om->getRepository('verbundenBlendokuBundle:User')->findOneByName($name);
-        $level = $this->om->getRepository('verbundenBlendokuBundle:Level')->findOneById($id);
-        $game = $this->repository->findOneBy(array('user' => $name, 'level' => $id));
-        if($user->getAccesstoken() !== $accesstoken){
-            return array('error' => 'auth_failed');
-        }
-        if (!$game) {
-            $game = gameHandler::createNewGame();
-            
-            $game->setUser($user);
-            $game->setLevel($level);
-            if (!$level){
-                return array('error' => 'no_level');
-            }
-            if (!$user){
-                return array('error' => 'no_user');
-            }
-        }
-        $game->setStarttime(time());
-        $this->om->persist($game);
-        $this->om->flush($game);
-        return $game;
-    }
-
-    /**
-     * Solve one level given the parameters
-     *
-     * @api
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param integer $level_id
-     * @param array $parameters
-     * @return array
-     */
-    public function solveGame(array $parameters) {
-        $this->postedNameLen($parameters['user']['name']);
-        $name = $this->postedNameLen($parameters['user']['name']);
-        $accesstoken = $parameters['user']['accesstoken'];
-        $id = $parameters['level']['id'];
-        // get game session object:
-        $game = $this->repository->findOneBy(array('user' => $name, 'level' => $id));
-        //build the return message
-        $return['level_id'] = $id;
-        $return['name'] = $name;
-        $return['error'] = '';
-        $return['score'] = 0;
-        $return['solved'] = false;
-        ////////////// TEST:
-        $parameters['starttime'] =$game->getStarttime();
-        ////////////// TEST    
-        
-        
-        // prove that starttime match with game session:
-        if ($game) {
-            // prove the user access:
-            if ($game->getUser()->getAccesstoken() !== $accesstoken) { // validate the game session:
-                $return['error'] = 'invalid_accesstoken'.$game->getUser()->getAccesstoken().'<->'.$accesstoken;
-                return $return;
-            }
-            if($game->getStarttime() !== $parameters['starttime']) {
-                $return['error'] = 'invalid_starttime'.$game->getStarttime().'='.$parameters['starttime'];
-                return $return;
-            }
-            if ($level->getGrid() == $parameters['grid']) { // prove the level solution:
-                $time = time();
-                // get the level score:
-                $stats = $this->calculateGameScore($game->getStarttime(), $time, $level->getComplexity());
-                $stats['old_score'] = $game->getScore();
-                if ($stats['old_score'] <= $stats['score']) {
-                    $game->setEndtime($time);
-                    $game->setScore($stats['score']);
-                    $this->om->persist($game);
-                    $this->om->flush($game);
-                }
-                $return['score'] = $stats['score'];
-                $return['solved'] = true;
-            }
-            return $return;
-        } else {
-            $level = $this->om->getRepository('verbundenBlendokuBundle:Level')->findOneById($parameters['level']);
-            if (!$level) {
-                $return['level_id'] = '';
-                $return['error'] = 'no_level';
-            } elseif ($level->getGrid() !== $parameters['grid']) {
-                $return['solved'] = false;
-            }
-            return $return;
-        }
     }
 
     /**
@@ -162,16 +48,186 @@ class GameHandler implements GameHandlerInterface {
     }
 
     /**
-     * calculate score
+     * List level with userscore
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param string $username
+     * @param string $accesstoken
+     * @param string $limit
+     * @param string $offset
+     * @return array queryresult
+     */
+    public function listGames($username, $accesstoken, $offset, $limit = 15) {
+        $query = $this->om->createQueryBuilder('game')
+                ->addSelect('level.id')
+                ->addSelect('game.score')
+                ->addSelect('user.name')
+                ->from('verbundenBlendokuBundle:Game game')
+                ->leftJoin('game.user', 'user')
+                ->leftJoin('game.level', 'level')
+                ->where('user.name =:username')
+                ->where('user.accestoken =:accesstoken')
+                ->setParameter('username', $username)
+                ->setParameter('accesstoken', $accesstoken)
+                ->orderBy('level.id', 'ASC')
+                ->groupBy('game.level')
+                ->setFirstResult($offset)
+                ->setMaxResults($limit)
+                ->getQuery();
+        return $query->getResult();
+    }
+
+    /**
+     * Start a level
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param array $parameters
+     * @return array game object
+     */
+    public function startGame(array $parameters) {
+        $name = $this->postedNameLen($parameters['user']['name']);
+        $id = $parameters['level']['id'];
+        $accesstoken = $parameters['user']['accesstoken'];
+        if (!$name || !$accesstoken) {
+            return array('error' => 'no_input', 'name' => $name, 'accesstoken' => $accesstoken);
+        }
+        $user = $this->om->getRepository('verbundenBlendokuBundle:User')->findOneByName($name);
+        $level = $this->om->getRepository('verbundenBlendokuBundle:Level')->findOneById($id);
+        $game = $this->repository->findOneBy(array('user' => $name, 'level' => $id));
+        if ($user->getAccesstoken() !== $accesstoken) {
+            return array('error' => 'auth_failed'); //,'name'=>$name, 'accesstoken'=>$accesstoken, 'accesstokendb'=>$user->getAccesstoken());
+        }
+        if (!$game) {
+            $game = gameHandler::createNewGame();
+
+            $game->setUser($user);
+            $game->setLevel($level);
+            if (!$level) {
+                return array('error' => 'no_level');
+            }
+            if (!$user) {
+                return array('error' => 'no_user');
+            }
+        }
+        $game->setStarttime(time());
+        $this->om->persist($game);
+        $this->om->flush($game);
+        return $game;
+    }
+
+    /**
+     * Solve a level
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param array $parameters
+     * @return array status
+     */
+    public function solveGame(array $parameters) {
+        $this->postedNameLen($parameters['user']['name']);
+        $name = $this->postedNameLen($parameters['user']['name']);
+        $accesstoken = $parameters['user']['accesstoken'];
+        $id = $parameters['level']['id'];
+        // get game session object:
+        $game = $this->repository->findOneBy(array('user' => $name, 'level' => $id));
+        //build the return message
+        $return['level_id'] = $id;
+        $return['name'] = $name;
+        $return['error'] = '';
+        $return['score'] = 0;
+        $return['solved'] = false;
+        if ($game) {
+            // prove the user access:
+            if ($game->getUser()->getAccesstoken() !== $accesstoken) { // validate the game session:
+                $return['error'] = 'invalid_accesstoken';
+                return $return;
+            }
+            // prove that starttime match with game session:
+            if (strval($game->getStarttime()) !== $parameters['starttime']) {
+                $return['error'] = 'invalid_starttime';
+                return $return;
+            }
+            $level = $game->getLevel();
+            if ($level->getGrid() == $parameters['grid']) { // prove the level solution:
+                $time = time();
+                // get the level score:
+                $stats = $this->calculateGameScore($game->getStarttime(), $time, $level->getComplexity());
+                $stats['old_score'] = $game->getScore();
+                if ($stats['old_score'] <= $stats['score']) {
+                    $game->setEndtime($time);
+                    $game->setScore($stats['score']);
+                    $this->om->persist($game);
+                    $this->om->flush($game);
+                }
+                $return['score'] = $stats['score'];
+                $return['solved'] = true;
+            }
+            return $return;
+        } else {
+            $return['error'] = 'found_no_game';
+        }
+    }
+
+    /**
+     * get the global High Score
      *
      * @api
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param  integer $limit
+     * @param  integer $offset
+     * @return array 
+     */
+    public function highScore($limit, $offset) {
+        $query = $this->om->createQueryBuilder('game')
+                ->addSelect('user.name')
+                ->addSelect('SUM(game.score) AS user_score')
+                ->addSelect('count(user.name) AS played_level')
+                ->from('verbundenBlendokuBundle:Game game')
+                ->leftJoin('game.user', 'user')
+                ->groupBy('game.user')
+                ->orderBy('user_score', 'DESC')
+                ->setFirstResult($offset)
+                ->setMaxResults($limit)
+                ->getQuery();
+        return $query->getResult();
+    }
+
+    /**
+     * get the score of one user
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param  string $username
+     * @return integer 
+     */
+    public function userScore($username) {
+        $query = $this->om->createQueryBuilder('game')
+                ->addSelect('user.name')
+                ->addSelect('SUM(game.score) AS user_score')
+                ->addSelect('count(user.name) AS played_level')
+                ->from('verbundenBlendokuBundle:Game game')
+                ->where('user.name =:username')
+                ->setParameter('username', $username)
+                ->leftJoin('game.user', 'user')
+                ->groupBy('game.user')
+                ->orderBy('user_score', 'DESC')
+                ->getQuery();
+        return $query->getResult();
+    }
+
+    /**
+     * calculate score
      *
      * @author Martin Kuntizsch 2014
      * @version 1.0
      * @param  integer $starttime
      * @param  integer $endtime
      * @param  integer $complexity
-     * @return integer 
+     * @return array 
      */
     public function calculateGameScore($starttime, $endtime, $complexity) {
         $data['maxtime'] = 30 * $complexity;
@@ -181,64 +237,8 @@ class GameHandler implements GameHandlerInterface {
         return $data;
     }
 
-     /**
-     * calculate User Score
-     *
-     * @api
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param  string $username
-     * @return integer 
-     */
-    public function calculateUserScore($username) {
-        $data = $this->om->getRepository('verbundenBlendokuBundle:game')->findByUser($username);
-        $userscore = 0;
-        foreach ($data as $value) {
-            $userscore += $value->getScore(); 
-        }
-        return array('username'=>$username,'totalscore'=>$userscore);
-    }
-    
-     /**
-     * calculate High Score
-     *
-     * @api
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param  string $username
-     * @return integer 
-     */
-    public function calculateHighScore() {
-        return array('hmhm');
-        $result = $this->createQueryBuilder('qb')
-            ->select("avg(qb.score) as avg, count(qb.score) as count")
-            ->where('g.idPlayer = :idPlayer')
-            ->groupBy('qb.Name')
-            ->setParameter('idPlayer', $id)
-            ->orderBy('stat_sum_realised', 'DESC')
-            ->getQuery();
-        return $result;
-        
-        $q = $this->om->createQueryBuilder();
-        $q->select(['game.user'])
-          ->addSelect('SUM(game.score) AS HIDDEN stat_sum_realised')
-          ->from('Entity\Game', 'game')
-          ->groupBy('game.user');
-        $q->orderBy('stat_sum_realised', 'DESC');
-        
-        $users = $this->om->getRepository('verbundenBlendokuBundle:user')->findAll();
-        $output = array();
-        foreach ($users as $user) {
-            array_push($output, $this->calculateUserScore($user->getName()));
-        }
-        array_multisort($output, SORT_DESC, $userscore, SORT_ASC, $output);
-        return $output;
-    }
-    
     /**
-     * Validate posted Username
+     * check posted username
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
@@ -246,15 +246,12 @@ class GameHandler implements GameHandlerInterface {
      * @return string $string
      */
     protected function postedNameLen($string) {
-        if (strlen($string) < 5){
+        if (strlen($string) < 5) {
             $string = NULL;
-        }else{
+        } else {
             $string = strtolower($string);
         }
-        //if ($string == 'admin' || $string == 'guest'){
-        //    $string = NULL;
-        //}
         return $string;
     }
-    
+
 }
