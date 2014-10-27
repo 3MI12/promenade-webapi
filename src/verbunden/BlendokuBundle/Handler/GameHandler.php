@@ -3,7 +3,6 @@
 namespace verbunden\BlendokuBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use verbunden\BlendokuBundle\Model\GameInterface;
 use verbunden\BlendokuBundle\Model\LevelInterface;
 
@@ -18,7 +17,6 @@ class GameHandler implements GameHandlerInterface {
     private $om;
     private $entityClass;
     private $repository;
-    private $formFactory;
 
     /**
      * construct
@@ -58,24 +56,27 @@ class GameHandler implements GameHandlerInterface {
      * @param string $offset
      * @return array queryresult
      */
-    public function listGames($username, $accesstoken, $offset, $limit = 15) {
-        $query = $this->om->createQueryBuilder('game')
-                ->addSelect('level.id')
-                ->addSelect('game.score')
-                ->addSelect('user.name')
+    public function listGames($username, $accesstoken, $offset = 0, $limit = 15) {
+        $result = array();
+        if ($username && $accesstoken) {
+            $query = $this->om->createQueryBuilder('game')
+                ->addSelect('level.id AS id')
+                ->addSelect('user.name AS name')
+                ->addSelect('game.score AS level_score')
                 ->from('verbundenBlendokuBundle:Game game')
                 ->leftJoin('game.user', 'user')
-                ->leftJoin('game.level', 'level')
-                ->where('user.name =:username')
-                ->where('user.accestoken =:accesstoken')
+                ->andWhere("user.name = :username")
+                ->andWhere('user.accesstoken = :accesstoken')
                 ->setParameter('username', $username)
                 ->setParameter('accesstoken', $accesstoken)
-                ->orderBy('level.id', 'ASC')
-                ->groupBy('game.level')
+                ->leftJoin('game.level', 'level')
+                ->orderBy('id', 'ASC')
                 ->setFirstResult($offset)
                 ->setMaxResults($limit)
                 ->getQuery();
-        return $query->getResult();
+        $result = $query->getResult();
+        }
+        return $result;
     }
 
     /**
@@ -104,6 +105,7 @@ class GameHandler implements GameHandlerInterface {
 
             $game->setUser($user);
             $game->setLevel($level);
+            $game->setScore('0');
             if (!$level) {
                 return array('error' => 'no_level');
             }
@@ -167,6 +169,7 @@ class GameHandler implements GameHandlerInterface {
             return $return;
         } else {
             $return['error'] = 'found_no_game';
+            return $return;
         }
     }
 
@@ -181,7 +184,7 @@ class GameHandler implements GameHandlerInterface {
      * @param  integer $offset
      * @return array 
      */
-    public function highScore($limit, $offset) {
+    public function highScore($limit = 10, $offset = 0) {
         $query = $this->om->createQueryBuilder('game')
                 ->addSelect('user.name')
                 ->addSelect('SUM(game.score) AS user_score')
@@ -205,18 +208,21 @@ class GameHandler implements GameHandlerInterface {
      * @return integer 
      */
     public function userScore($username) {
-        $query = $this->om->createQueryBuilder('game')
-                ->addSelect('user.name')
-                ->addSelect('SUM(game.score) AS user_score')
-                ->addSelect('count(user.name) AS played_level')
-                ->from('verbundenBlendokuBundle:Game game')
-                ->where('user.name =:username')
-                ->setParameter('username', $username)
-                ->leftJoin('game.user', 'user')
-                ->groupBy('game.user')
-                ->orderBy('user_score', 'DESC')
-                ->getQuery();
-        return $query->getResult();
+        if ($username) {
+            $query = $this->om->createQueryBuilder('game')
+                    ->addSelect('user.name')
+                    ->addSelect('SUM(game.score) AS user_score')
+                    ->addSelect('count(user.name) AS played_level')
+                    ->from('verbundenBlendokuBundle:Game game')
+                    ->where('user.name =:username')
+                    ->setParameter('username', $username)
+                    ->leftJoin('game.user', 'user')
+                    ->groupBy('game.user')
+                    ->orderBy('user_score', 'DESC')
+                    ->getQuery();
+            $result = $query->getResult();
+        }
+        return $result;
     }
 
     /**
@@ -230,10 +236,13 @@ class GameHandler implements GameHandlerInterface {
      * @return array 
      */
     public function calculateGameScore($starttime, $endtime, $complexity) {
-        $data['maxtime'] = 30 * $complexity;
-        $data['timediff'] = $endtime - $starttime;
-        $data['score'] = $data['maxtime'] - $data['timediff'];
-        $data['score'] = ($data['score'] >= 0) ? $data['score'] : 0;
+        $data = array();
+        if ($starttime && $endtime && $complexity) {
+            $data['maxtime'] = 30 * $complexity;
+            $data['timediff'] = $endtime - $starttime;
+            $data['score'] = $data['maxtime'] - $data['timediff'];
+            $data['score'] = ($data['score'] >= 0) ? $data['score'] : 0;
+        }
         return $data;
     }
 

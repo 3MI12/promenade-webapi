@@ -198,6 +198,23 @@ class UserHandler implements UserHandlerInterface {
         }
         return false;
     }
+    
+    /**
+     * Verify a user given name and accesstoken
+     *
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @parm   string  passwordhash  $name
+     * @param  string  usersalt      $accesstoken
+     * @return bool
+     */
+    public function verifyAccesstoken($name, $accesstoken) {
+        $user = $this->showUser($name);
+        if ($user && $accesstoken && $accesstoken == $user->$getAccesstoken){
+            return true;
+        }
+        return false;
+    }
 
     /**
      * create accesstoken

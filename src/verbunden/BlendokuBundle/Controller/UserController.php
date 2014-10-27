@@ -39,15 +39,28 @@ class UserController extends FOSRestController {
      * @return array
      */
     public function getShowAction($user_name) {
-        if (!($user = $this->container->get('verbunden_blendoku.user.handler')->showUser($user_name))) {
-            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $user_name));
-        }
-        return $user;
+        return $this->container->get('verbunden_blendoku.user.handler')->showUser($user_name);
     }
 
     /**
      * Login a user and get an accesskey. If user does not exist or authentification was not successfull it returns an empty accessKey. 
      *
+     * Example request:
+     * {
+     *  "user": {
+     *  "name": "Benjamin",
+     *  "password": "*******"
+     *  }
+     * }
+     * 
+     * Example response: 
+     * {
+     *  "name": "benjamin",
+     *  "accesstoken": "f48091f104832b393309922c70729aa4",
+     *  "time": 1414084546,
+     *  "status": "loggedin"
+     * }
+     * 
      * @ApiDoc(
      *   resource = true,
      *   description = "Login/Register user",
@@ -68,7 +81,23 @@ class UserController extends FOSRestController {
 
     /**
      * Logout user 
+     * 
+     * Example request:
+     * {
+     *  "name": "benjamin",
+     *  "accesstoken": "f48091f104832b393309922c70729aa4",
+     *  "time": 1414084546,
+     *  "status": "loggedin"
+     * }
      *
+     * Example response:
+     * {
+     *  "name": "benjamin",
+     *  "accesstoken": " ",
+     *  "time": " ",
+     *  "status": "loggedout"
+     * }
+     * 
      * @ApiDoc(
      *   resource = true,
      *   description = "Logout a user and invalidate the accesskey.",

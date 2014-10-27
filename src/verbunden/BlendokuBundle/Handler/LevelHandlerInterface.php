@@ -50,19 +50,7 @@ interface LevelHandlerInterface {
      * @return bool
      */
     public function solveLevel($level_id, array $parameters);
-
-    /**
-     * Edit/Create one level given the parameters
-     *
-     * @api
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param array $parameters
-     * @return array
-     */
-    public function editLevel(array $parameters);
-
+    
     /**
      * Delete one level given the identifier
      *
@@ -70,8 +58,10 @@ interface LevelHandlerInterface {
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param integer $id
+     * @param integer $level_id
+     * @param $user_name
+     * @param $accesstoken
      * @return bool
      */
-    public function deleteLevel($level_id);
+    public function deleteLevel($level_id, $user_name, $accesstoken);
 }

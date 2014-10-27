@@ -61,7 +61,6 @@ class GameController extends FOSRestController {
      *   output = "verbunden\BlendokuBundle\Entity\Level",
      *   statusCodes = {
      *     200 = "Returned when successful",
-     *     404 = "Returned when the level is not found"
      *   }
      * )
      *
@@ -69,18 +68,61 @@ class GameController extends FOSRestController {
      * @version 1.0
      * @param int     $level_id      the level id
      * @return array
-     * @throws NotFoundHttpException when page not exist
      */
     public function getShowAction($level_id) {
-        if (!($level = $this->container->get('verbunden_blendoku.level.handler')->showLevel($level_id))) {
-            throw new NotFoundHttpException(sprintf('The resource \'%s\' was not found.', $level_id));
-        }
-        return $level;
+        return $level = $this->container->get('verbunden_blendoku.level.handler')->showLevel($level_id);
     }
 
     /**
      * Start Level 
      *
+     * Example header for request:
+     * 
+     * "name": "benjamin"
+     * "accesstoken": "a5cd71cac23047fd80cfca5a0eb1fe14"
+     * 
+     * Example response:
+     * 
+     * {
+     *  "user": {
+     *    "name": "benjamin"
+     *  },
+     *  "level": {
+     *    "id": 1,
+     *    "color": [
+     *      "#aab835",
+     *      "#7d9a38",
+     *      "#4d7e38"
+     *    ],
+     *    "startgrid": {
+     *     "52": {
+     *        "color": "#d7da2e",
+     *        "edit": false
+     *      },
+     *      "53": {
+     *        "color": "#ffffff",
+     *        "edit": true
+     *      },
+     *      "54": {
+     *        "color": "#ffffff",
+     *        "edit": true
+     *      },
+     *      "55": {
+     *        "color": "#ffffff",
+     *        "edit": true
+     *      },
+     *      "56": {
+     *        "color": "#006836",
+     *        "edit": false
+     *      }
+     *    },
+     *    "complexity": 2
+     *  },
+     *  "starttime": 1414081381,
+     *  "endtime": 1413936006,
+     *  "score": 49
+     *}
+     * 
      * @ApiDoc(
      *   resource = true,
      *   description = "Starts a Level for a given id",
@@ -105,6 +147,34 @@ class GameController extends FOSRestController {
     /**
      * Solve level
      *
+     * Example request:
+     * 
+     * {
+     * "user": {
+     * "name": "benjamin",
+     * "accesstoken": "a5cd71cac23047fd80cfca5a0eb1fe14"
+     * },
+     * "grid": {
+     *   "52": "#d7da2e",
+     *   "53": "#aab835",
+     *   "54": "#7d9a38",
+     *   "55": "#4d7e38",
+     *   "56": "#006836"
+     * },
+     * "complexity": "2",
+     * "starttime": "1414081381"
+     * }
+     * 
+     * Example response:
+     * 
+     * {
+     *  "level_id": "1",
+     *  "name": "benjamin",
+     *  "error": "",
+     *  "score": 50,
+     *  "solved": true
+     * }
+     * 
      * @ApiDoc(
      *   resource = true,
      *   input = "verbunden\BlendokuBundle\Form\GameType",
@@ -113,7 +183,6 @@ class GameController extends FOSRestController {
      *   }
      * )
      * 
-     * @Annotations\RequestParam(name="post", requirements="\d+", default="file", description="JSON file with solved Level.")
      * 
      * @author Benjamin Brandt
      * @version 1.0
@@ -171,7 +240,7 @@ class GameController extends FOSRestController {
      * )
      *
      * @param Request               $request      the request object
-     * @return FormTypeInterface|View
+     * @return array
      */
     public function getInitialAction() {
         $levellist = array();
@@ -179,7 +248,7 @@ class GameController extends FOSRestController {
             $parameters = array();
             switch ($level_id) {
                 case 1:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['52'] = '#d7da2e';
                     $parameters['free']['53'] = '#aab835';
                     $parameters['free']['54'] = '#7d9a38';
@@ -188,8 +257,8 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '2';
                     break;
                 case 2:
-                    $parameters['level_id'] = $level_id;
-                    $parameters['set']['51'] = '#f3f2f2';
+                    $parameters['level']['id'] = $level_id;
+                    $parameters['set']['51'] = '#c0c0c0';
                     $parameters['free']['52'] = '#cbc9c8';
                     $parameters['free']['53'] = '#a7a2a1';
                     $parameters['free']['54'] = '#868180';
@@ -199,7 +268,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '3';
                     break;
                 case 3:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['43'] = '#fe42322';
                     $parameters['free']['44'] = '#be223f';
                     $parameters['free']['45'] = '#932657';
@@ -208,7 +277,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '2';
                     break;
                 case 4:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['63'] = '#009ee0';
                     $parameters['free']['64'] = '#00adbe';
                     $parameters['free']['65'] = '#70bd95';
@@ -220,7 +289,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '2';
                     break;
                 case 5:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['63'] = '#d7da2e';
                     $parameters['free']['64'] = '#d4d666';
                     $parameters['free']['65'] = '#d2d38e';
@@ -232,7 +301,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '2';
                     break;
                 case 6:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['51'] = '#c1272d';
                     $parameters['free']['52'] = '#b46e59';
                     $parameters['free']['53'] = '#9da197';
@@ -246,7 +315,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '13';
                     break;
                 case 7:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['free']['63'] = '#f8b334';
                     $parameters['free']['44'] = '#d2a868';
                     $parameters['free']['45'] = '#a49b8d';
@@ -261,7 +330,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '13';
                     break;
                 case 8:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['63'] = '#ee869a';
                     $parameters['free']['64'] = '#dc9e8d';
                     $parameters['free']['65'] = '#c6ae73';
@@ -272,7 +341,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '13';
                     break;
                 case 9:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['44'] = '#47b393';
                     $parameters['free']['45'] = '#87b05e';
                     $parameters['set']['46'] = '#afac0b';
@@ -285,7 +354,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '13';
                     break;
                 case 10:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['42'] = '#0e1634';
                     $parameters['free']['52'] = '#3a1b31';
                     $parameters['set']['62'] = '#733031';
@@ -301,7 +370,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '13';
                     break;
                 case 11:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['21'] = '#e7df00';
                     $parameters['free']['31'] = '#bfce02';
                     $parameters['free']['41'] = '#91bd1d';
@@ -329,7 +398,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '25';
                     break;
                 case 12:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['set']['51'] = '#293d29';
                     $parameters['free']['61'] = '#395032';
                     $parameters['free']['71'] = '#4a6439';
@@ -353,32 +422,34 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '25';
                     break;
                 case 13:
-                    $parameters['level_id'] = $level_id;
-                    $parameters['set']['31'] = '#3968ac';
-                    $parameters['free']['41'] = '#6474ac';
-                    $parameters['free']['51'] = '#948084';
-                    $parameters['set']['61'] = '#c68752';
-                    $parameters['free']['32'] = '#5382be';
-                    $parameters['free']['33'] = '#6a9acd';
-                    $parameters['set']['34'] = '#8bb6cf';
-                    $parameters['free']['44'] = '#727c8c';
+                    $parameters['level']['id'] = $level_id;
+                    $parameters['set']['31'] = '#296dd6';
+                    $parameters['set']['61'] = '#c58652';
+                    $parameters['set']['56'] = '#8c4d5a';
+                    $parameters['set']['47'] = '#de0c8c';
+                    $parameters['set']['34'] = '#8cb6ce';
+                    $parameters['set']['77'] = '#6b8519'; 
+                    $parameters['free']['41'] = '#6375ad';
+                    $parameters['free']['51'] = '#948183';
+                    $parameters['free']['32'] = '#4a86d6';
+                    $parameters['free']['33'] = '#6b9ace';
+                    $parameters['free']['44'] = '#737d8c';
                     $parameters['free']['54'] = '#5a5152';
-                    $parameters['set']['64'] = '#4a3121';
-                    $parameters['free']['74'] = '#3f180f';
-                    $parameters['free']['55'] = '#79515a';
-                    $parameters['free']['65'] = '#5a4028';
-                    $parameters['free']['75'] = '#404713';
-                    $parameters['set']['57'] = '#8d4c5a';
+                    $parameters['free']['64'] = '#4a3121';
+                    $parameters['free']['74'] = '#421408'; 
+                    $parameters['free']['55'] = '#7b515a';
+                    $parameters['free']['65'] = '#5a4129';
+                    $parameters['free']['75'] = '#423100';
+                    $parameters['free']['66'] = '#6b5129';
                     $parameters['free']['67'] = '#6a5129';
-                    $parameters['free']['77'] = '#59591d';
+                    $parameters['free']['76'] = '#5a5910';
                     $parameters['free']['47'] = '#d52183';
-                    $parameters['free']['57'] = '#a54d62';
-                    $parameters['free']['67'] = '#8c6939';
-                    $parameters['set']['77'] = '#6c8524';
+                    $parameters['free']['57'] = '#a44d63';
+                    $parameters['free']['67'] = '#8c693a';
                     $parameters['complexity'] = '25';
                     break;
                 case 14:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['free']['40'] = '#96bf33';
                     $parameters['free']['50'] = '#6db129';
                     $parameters['free']['60'] = '#41932c';
@@ -413,7 +484,7 @@ class GameController extends FOSRestController {
                     $parameters['complexity'] = '25';
                     break;
                 case 15:
-                    $parameters['level_id'] = $level_id;
+                    $parameters['level']['id'] = $level_id;
                     $parameters['free']['20'] = '#34388c';
                     $parameters['free']['21'] = '#3e3784';
                     $parameters['free']['22'] = '#504593';

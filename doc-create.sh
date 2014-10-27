@@ -1,1 +1,2 @@
-~/api/vendor/bin/phpdoc.php -d ~/api/src/verbunden/blendokuBundle/ -t ~/api/web/code/doc/ -i /var/www/clients/client5/web8/api/vendor/
+#!/bin/bash
+~/api/vendor/phpdocumentor/phpdocumentor/bin/phpdoc -d ~/api/src/verbunden/blendokuBundle/ -t ~/andrea/phpdoc

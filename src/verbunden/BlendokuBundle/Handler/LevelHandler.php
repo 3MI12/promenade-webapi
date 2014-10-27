@@ -3,7 +3,6 @@
 namespace verbunden\BlendokuBundle\Handler;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use verbunden\BlendokuBundle\Model\LevelInterface;
 
 /**
@@ -17,7 +16,6 @@ class LevelHandler implements LevelHandlerInterface {
     private $om;
     private $entityClass;
     private $repository;
-    private $formFactory;
 
     /**
      * construct
@@ -27,7 +25,7 @@ class LevelHandler implements LevelHandlerInterface {
      * @param ObjectManager $om
      * @param string $entityClass
      */
-    public function __construct(ObjectManager $om, $entityClass) { 
+    public function __construct(ObjectManager $om, $entityClass) {
         $this->om = $om;
         $this->entityClass = $entityClass;
         $this->repository = $this->om->getRepository($this->entityClass);
@@ -92,16 +90,39 @@ class LevelHandler implements LevelHandlerInterface {
      * @return array
      */
     public function createLevel(array $parameters) {
+        $name = $parameters['user']['name'];
+        $accesstoken = $parameters['user']['accesstoken'];
+        $level_id = $parameters['level']['id'];
+        if ($name == 'admin' && UserHandler::verifyAccesstoken($name, $accesstoken)) {
+            if (!$this->showLevel($level_id)) {
+                $level = $this->buildLevel($parameters);
+                $this->om->persist($level); //perist Data to Database
+                $this->om->flush($level);
+                return array('level_id' => $level_id, 'created' => true, 'error' => ' ');
+            }
+            return array('level_id' => $level_id, 'created' => false, 'error' => 'level_exists');
+        }
+        return array('level_id' => $level_id, 'created' => false, 'error' => 'invalid_accesstoken_or_user');
+    }
+
+    /*
+     * build Level array $game
+     * $game['grid'] is the solvedGrid
+     * $game['startgrid'] is the startGrid
+     * 
+     * @author Benjamin Brandt 2014
+     * @version 1.0
+     * @param array $parameters
+     * @return array
+     */
+
+    private function buildLevel(array $parameters) {
         $game['color'] = array(); //init color array
-        /*
-         * build Level array $game
-         * $game['grid'] is the solvedGrid
-         * $game['startgrid'] is the startGrid
-         */
+
         for ($i = 0; $i < 100; $i++) {
             if (isset($parameters['free'][$i])) {
                 $game['grid'][$i] = $parameters['free'][$i];
-                $game['startgrid'][$i] = array('color' => '#6b6b6b', 'edit' => true); // set default color #6b6b6b
+                $game['startgrid'][$i] = array('color' => '#ffffff', 'edit' => true); // set default color #ffffff
                 array_push($game['color'], $parameters['free'][$i]);
             } elseif (isset($parameters['set'][$i])) {
                 $game['grid'][$i] = $parameters['set'][$i];
@@ -109,49 +130,36 @@ class LevelHandler implements LevelHandlerInterface {
             }
         }
         shuffle($game['color']); //randomize order of the color values
-        $level = LevelHandler::createNewLevel(); // create new level object
+        $level = $this->createNewLevel(); // create new level object
         //set values
-        $level->setId($parameters['level_id']);
+        $level->setId($parameters['level']['id']);
         $level->setColor($game['color']);
         $level->setComplexity($parameters['complexity']);
         $level->setGrid($game['grid']);
         $level->setStartgrid($game['startgrid']);
-
-        $this->om->persist($level); //perist Data to Database
-        $this->om->flush($level);
-
         return $level;
     }
 
     /**
-     * Edit one level given the parameters
+     * Delete one level with the identifier
      *
      * @api
      *
      * @author Benjamin Brandt 2014
      * @version 1.0
-     * @param array $parameters
-     * @return GameInterface
-     */
-    public function editLevel(array $parameters) {
-        return NULL;
-    }
-
-    /**
-     * Delete one level given the identifier
-     *
-     * @api
-     *
-     * @author Benjamin Brandt 2014
-     * @version 1.0
-     * @param integer $id
+     * @param integer $level_id
+     * @param $user_name
+     * @param $accesstoken
      * @return bool
      */
-    public function deleteLevel($level_id) {
-        $level = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findOneById($level_id);
-        $em->remove($level);
-        $em->flush();
-        return $level;
+    public function deleteLevel($level_id, $user_name, $accesstoken) {
+        if ($user_name == 'admin' && UserHandler::verifyAccesstoken($user_name, $accesstoken)) {
+            $level = $this->getDoctrine()->getRepository('verbundenBlendokuBundle:Level')->findOneById($level_id);
+            $em->remove($level);
+            $em->flush();
+            return array('level_id' => $level_id, 'deleted' => false);
+        }
+        return array('level_id' => $level_id, 'deleted' => false);
     }
 
     /**
