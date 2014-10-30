@@ -209,7 +209,7 @@ class UserHandler implements UserHandlerInterface {
      * @return bool
      */
     public function verifyAccesstoken($name, $accesstoken) {
-        $user = $this->showUser($name);
+        $user = UserHandler::showUser($name);
         if ($user && $accesstoken && $accesstoken == $user->$getAccesstoken){
             return true;
         }
