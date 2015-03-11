@@ -1,0 +1,11 @@
+verbunden\PromenadeBundle\Entity\Level:
+    exclusion_policy: ALL
+    properties:
+        id:
+            expose: true
+        color:
+            expose: true
+        startgrid:
+            expose: true
+        complexity:
+            expose: true

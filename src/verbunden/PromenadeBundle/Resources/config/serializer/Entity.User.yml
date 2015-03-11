@@ -1,0 +1,5 @@
+verbunden\PromenadeBundle\Entity\User:
+    exclusion_policy: ALL
+    properties:
+        name:
+            expose: true

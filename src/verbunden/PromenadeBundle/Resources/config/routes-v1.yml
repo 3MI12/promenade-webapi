@@ -1,0 +1,17 @@
+verbunden_promenade_user:
+     type: rest
+     prefix: /user
+     resource: "\verbunden\PromenadeBundle\Controller\UserController"
+     name_prefix:  promande_user_
+
+verbunden_promenade_level:
+     type: rest
+     prefix: /level
+     resource: "verbunden\PromenadeBundle\Controller\GameController"
+     name_prefix:  promanade_level_
+
+verbunden_promenade_stats:
+     type: rest
+     prefix: /stats
+     resource: "verbunden\PromenadeBundle\Controller\StatsController"
+     name_prefix:  promanade_stats_
